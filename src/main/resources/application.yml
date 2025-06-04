@@ -1,0 +1,45 @@
+spring:
+  application:
+    name: AI-System
+  ai:
+    # ollama本地部署的大模型配置
+    ollama:
+      base-url: http://localhost:11434 # 模型接口地址
+      chat:
+        model: deepseek-r1:7b # 使用的模型名称
+  # MySQL
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/cs_system
+    username: csAdmin
+    password: qaz147852
+
+# mybatis-plus
+mybatis-plus:
+  mapper-locations: classpath:mappers/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto # 使用数据库主键自增
+
+logging:
+  # 设置日志级别
+  level:
+    org.springframework.ai.chat.client.advisor: debug
+    com.lyh.aiSystem: debug
+
+lyh:
+  # 密码加密
+  password:
+    salt: a6dsf4!8924a**3/3asdf. # MD5加密时使用的盐值
+  # Jwt
+  jwt:
+    secret-key: 147qaz8522434d/*safjiweir47891!qwexuzigeuiib # Jwt密钥
+    expire-time: 36000000 # Jwt过期时间（单位毫秒）
+#    expire-time: 1000
+    token-head: Authorization # 保存Jwt的字段名称
+
+server:
+  port: 7816
+
