@@ -15,6 +15,7 @@ public class BaseException extends RuntimeException{
     private String value;
 
     public BaseException(ExceptionEnum exceptionEnum) {
+        super(exceptionEnum.getValue()); // 将异常消息传递给父类RuntimeException
         this.code = exceptionEnum.getCode();
         this.value = exceptionEnum.getValue();
     }

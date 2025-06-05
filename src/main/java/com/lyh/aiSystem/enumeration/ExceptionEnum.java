@@ -35,6 +35,7 @@ public enum ExceptionEnum {
      *  聊天相关异常
      */
     CHAT_SESSION_NOT_EXIST(30001, "会话不存在"),
+    CHAT_ROLE_UNKNOWN(30002, "未知聊天角色"),
 
     /**
      *  系统异常：用于在通用系统错误时抛出

@@ -8,5 +8,5 @@ public class ChatRoleConstant {
 
     public static final String CHAT_ROLE_USER  = "user";
 
-    public static final String CHAT_ROLE_AI = "ai";
+    public static final String CHAT_ROLE_ASSISTANT = "assistant";
 }
