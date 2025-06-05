@@ -10,6 +10,8 @@ import com.lyh.aiSystem.utils.UserContextUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author BigHH
  */
@@ -37,5 +39,15 @@ public class ChatSessionServiceImpl implements ChatSessionService {
                 throw new BaseException(ExceptionEnum.DB_INSERT_ERROR); // 抛出数据库插入失败异常
             }
         }
+    }
+
+    /**
+     *  根据用户id获取其所有会话id
+     * @param userId
+     * @return
+     */
+    @Override
+    public List<String> getSessionIdsByUserId(Long userId) {
+        return sessionMapper.selectSessionIds(userId);
     }
 }

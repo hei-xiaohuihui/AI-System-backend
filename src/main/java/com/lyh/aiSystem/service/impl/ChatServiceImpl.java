@@ -22,6 +22,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 
+import java.util.List;
+
 
 /**
  * @author BigHH
@@ -43,7 +45,7 @@ public class ChatServiceImpl implements ChatService {
      * @param message
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)
+//    @Transactional(rollbackFor = Exception.class)
     @Override
     public Flux<String> handleChat(String sessionId, String message) {
         // 创建会话
@@ -56,4 +58,15 @@ public class ChatServiceImpl implements ChatService {
                 .stream()
                 .content();
     }
+
+    /**
+     *  获取当前登录用户的所有会话id列表
+     * @return
+     */
+    @Override
+    public List<String> getSessionIds() {
+        return chatSessionService.getSessionIdsByUserId(userContextUtil.getUserId());
+    }
+
+
 }

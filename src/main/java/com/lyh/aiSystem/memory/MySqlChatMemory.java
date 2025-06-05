@@ -33,16 +33,8 @@ public class MySqlChatMemory implements ChatMemory {
 
     private final ChatSessionMapper chatSessionMapper;
 
-//    private final ChatSessionService  chatSessionService;
-
-//    private final UserContextUtil userContextUtil;
-
-//    @Transactional(rollbackFor = Exception.class)
     @Override
     public void add(String conversationId, List<Message> messages) {
-        // 创建会话表
-//        chatSessionService.createSessionIfNotExist(conversationId, userContextUtil.getUserId());
-
         // 处理会话消息，使用ChatMessage对象的集合保存
         List<ChatMessage> chatMessageList = messages.stream().map(msg -> {
             ChatMessage chatMessage = ChatMessage.builder()
