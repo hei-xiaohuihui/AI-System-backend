@@ -7,4 +7,6 @@ public interface ChatSessionService {
     void createSessionIfNotExist(String sessionId, Long userId);
 
     List<String> getSessionIdsByUserId(Long userId);
+
+    Long  getUserIdBySessionId(String sessionId);
 }

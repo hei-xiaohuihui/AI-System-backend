@@ -2,6 +2,8 @@ package com.lyh.aiSystem.controller;
 
 import com.lyh.aiSystem.service.ChatService;
 import com.lyh.aiSystem.utils.Result;
+import com.lyh.aiSystem.utils.UserContextUtil;
+import com.lyh.aiSystem.vo.ChatMessageVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author BigHH
@@ -22,7 +26,9 @@ public class ChatController {
 
     private final ChatService chatService;
 
-    private final ChatMemory chatMemory;
+//    private final ChatMemory chatMemory;
+
+//    private final UserContextUtil userContextUtil;
 
     /**
      *  用于与AI聊天接口
@@ -53,8 +59,9 @@ public class ChatController {
      */
     @GetMapping("/history")
     public Result getHistory(@RequestParam("sessionId") String sessionId) {
-        List<Message> messageList = chatMemory.get(sessionId);
-        return Result.success(messageList);
+        List<ChatMessageVo> messageVoList = chatService.getHistoryBySessionId(sessionId);
+//        List<ChatMessageVo> messageVoList = chatMemory.get(sessionId).stream().map(msg -> new ChatMessageVo(msg.getMessageType().getValue(), msg.getText())).collect(Collectors.toList());
+        return Result.success(messageVoList);
     }
 
     /**
@@ -62,7 +69,8 @@ public class ChatController {
      */
     @DeleteMapping("/delete")
     public Result deleteSession(@RequestParam("sessionId") String sessionId) {
-        chatMemory.clear(sessionId);
+        chatService.deleteSessionById(sessionId);
+//        chatMemory.clear(sessionId);
         return Result.success();
     }
 }

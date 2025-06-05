@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author BigHH
+ *  负责持久化聊天消息到MySql数据库
  */
 @Component
 @RequiredArgsConstructor

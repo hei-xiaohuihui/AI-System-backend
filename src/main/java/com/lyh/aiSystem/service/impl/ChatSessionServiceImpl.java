@@ -50,4 +50,16 @@ public class ChatSessionServiceImpl implements ChatSessionService {
     public List<String> getSessionIdsByUserId(Long userId) {
         return sessionMapper.selectSessionIds(userId);
     }
+
+    /**
+     *  根据会话id获取用户id
+     * @param sessionId
+     * @return
+     */
+    @Override
+    public Long getUserIdBySessionId(String sessionId) {
+        ChatSession chatSession = sessionMapper.selectOne(new QueryWrapper<ChatSession>().eq("session_id", sessionId));
+        return chatSession.getUserId();
+    }
+
 }
