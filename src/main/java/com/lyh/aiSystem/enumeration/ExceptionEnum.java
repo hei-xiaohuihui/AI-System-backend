@@ -31,6 +31,10 @@ public enum ExceptionEnum {
     DB_INSERT_ERROR(20001, "DB插入失败"),
     DB_UPDATE_ERROR(20002, "DB更新失败"),
 
+    /**
+     *  聊天相关异常
+     */
+    CHAT_SESSION_NOT_EXIST(30001, "会话不存在"),
 
     /**
      *  系统异常：用于在通用系统错误时抛出

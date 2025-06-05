@@ -12,6 +12,7 @@ import com.lyh.aiSystem.mapper.UserMapper;
 import com.lyh.aiSystem.service.UserService;
 import com.lyh.aiSystem.utils.JwtUtil;
 import com.lyh.aiSystem.utils.MD5Util;
+import com.lyh.aiSystem.utils.UserContextUtil;
 import com.lyh.aiSystem.vo.UserDetailVo;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
     private final JwtUtil jwtUtil;
 
-    private final HttpServletRequest request;
+    private final UserContextUtil userContextUtil;
 
 //    public UserServiceImpl(UserMapper userMapper, MD5Util md5Util, JwtUtil jwtUtil, HttpServletRequest request) {
 //        this.userMapper = userMapper;
@@ -132,7 +133,7 @@ public class UserServiceImpl implements UserService {
         User updateUser = new User();
         // 设置属性
         BeanUtils.copyProperties(userUpdateDto, updateUser);
-        updateUser.setId(getCurrentUserId());
+        updateUser.setId(userContextUtil.getUserId());
         // 更新数据库
         int updateResult = userMapper.updateById(updateUser);
         if(updateResult == 0) {
@@ -146,20 +147,11 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public UserDetailVo getUserDetail() {
-        User user = userMapper.selectById(getCurrentUserId());
+        User user = userMapper.selectById(userContextUtil.getUserId());
         UserDetailVo userDetailVo = new UserDetailVo();
         BeanUtils.copyProperties(user, userDetailVo);
         // 返回用户详细信息视图对象
         return userDetailVo;
-    }
-
-
-    /**
-     *  从request中获取当前登录的用户Id的辅助方法
-     */
-    private Long getCurrentUserId() {
-        Claims claims = (Claims) request.getAttribute(JwtClaimsConstant.USER_CLAIMS);
-        return claims.get(JwtClaimsConstant.USER_ID, Long.class);
     }
 
     /**
