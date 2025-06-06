@@ -63,8 +63,17 @@ public class UserController {
         return Result.success();
     }
 
-    @GetMapping("/test")
-    public Result test() {
+    /**
+     *  检测token是否过期：只要前端成功请求到了这个接口，说明token没有过期（若过期了会被JwtInterceptor拦截）
+     * @return
+     */
+    @GetMapping("/checkToken")
+    public Result checkToken() {
         return Result.success();
     }
+
+//    @GetMapping("/test")
+//    public Result test() {
+//        return Result.success();
+//    }
 }

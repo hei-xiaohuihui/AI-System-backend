@@ -58,7 +58,11 @@ public class ChatSessionServiceImpl implements ChatSessionService {
      */
     @Override
     public Long getUserIdBySessionId(String sessionId) {
+        // 更具会话id查询会话
         ChatSession chatSession = sessionMapper.selectOne(new QueryWrapper<ChatSession>().eq("session_id", sessionId));
+        if(chatSession == null) {
+            throw new BaseException(ExceptionEnum.CHAT_SESSION_NOT_EXIST); // 抛出会话不存在异常
+        }
         return chatSession.getUserId();
     }
 

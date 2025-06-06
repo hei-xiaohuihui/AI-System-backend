@@ -37,7 +37,7 @@ lyh:
   jwt:
     secret-key: 147qaz8522434d/*safjiweir47891!qwexuzigeuiib # Jwt密钥
     expire-time: 36000000 # Jwt过期时间（单位毫秒）
-#    expire-time: 1000
+#    expire-time: 20000
     token-head: Authorization # 保存Jwt的字段名称
 
 server:

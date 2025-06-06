@@ -34,6 +34,11 @@ public class MySqlChatMemory implements ChatMemory {
 
     private final ChatSessionMapper chatSessionMapper;
 
+    /**
+     *  将每条会话消息持久化到MySql数据库（包括用户提问和AI回答）
+     * @param conversationId
+     * @param messages
+     */
     @Override
     public void add(String conversationId, List<Message> messages) {
         // 处理会话消息，使用ChatMessage对象的集合保存
@@ -55,6 +60,11 @@ public class MySqlChatMemory implements ChatMemory {
         chatMessageMapper.insert(chatMessageList);
     }
 
+    /**
+     *  根据会话id获取其对应的所有会话消息
+     * @param conversationId
+     * @return
+     */
     @Override
     public List<Message> get(String conversationId) {
         List<ChatMessage> messages = chatMessageMapper.getMessagesBySessionId(conversationId);
@@ -69,6 +79,10 @@ public class MySqlChatMemory implements ChatMemory {
         }).collect(Collectors.toList());
     }
 
+    /**
+     *  根据会话id删除会话及所有会话消息
+     * @param conversationId
+     */
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void clear(String conversationId) {

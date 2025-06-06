@@ -70,7 +70,6 @@ public class ChatController {
     @DeleteMapping("/delete")
     public Result deleteSession(@RequestParam("sessionId") String sessionId) {
         chatService.deleteSessionById(sessionId);
-//        chatMemory.clear(sessionId);
         return Result.success();
     }
 }
