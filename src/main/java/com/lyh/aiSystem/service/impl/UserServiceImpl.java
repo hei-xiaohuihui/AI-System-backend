@@ -1,6 +1,7 @@
 package com.lyh.aiSystem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lyh.aiSystem.constant.JwtClaimsConstant;
 import com.lyh.aiSystem.dto.UserLoginDto;
 import com.lyh.aiSystem.dto.UserRegisterDto;
@@ -40,13 +41,6 @@ public class UserServiceImpl implements UserService {
     private final JwtUtil jwtUtil;
 
     private final UserContextUtil userContextUtil;
-
-//    public UserServiceImpl(UserMapper userMapper, MD5Util md5Util, JwtUtil jwtUtil, HttpServletRequest request) {
-//        this.userMapper = userMapper;
-//        this.md5Util = md5Util;
-//        this.jwtUtil = jwtUtil;
-//        this.request = request;
-//    }
 
     /**
      *  用户注册

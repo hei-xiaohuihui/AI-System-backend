@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 /**
  * @author BigHH
- *         负责持久化聊天消息到MySql数据库
+ *  负责持久化聊天消息到MySql数据库
  */
 @Component
 @RequiredArgsConstructor
@@ -42,7 +42,7 @@ public class MySqlChatMemory implements ChatMemory {
 
     private final ChatSessionService chatSessionService;
 
-    private Long currentUserId; // 用于存储当前用户ID
+    private Long currentUserId; // 用于存储当前用户id
 
     /**
      * 设置当前用户ID

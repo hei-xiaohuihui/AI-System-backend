@@ -30,8 +30,7 @@ public class ChatModelConfig {
 //                .defaultSystem("你的名字叫小团团，你是一个热心可爱的AI智能助手。") // 设置系统提示词
                 .defaultAdvisors(
                         new SimpleLoggerAdvisor(), // 配置日志Advisor
-                        MessageChatMemoryAdvisor.builder(chatMemory).build() //  配置会话记忆Advisor，它会自动调用重写的ChatMemory的add方法，将消息持久化到数据库中
-                )
+                        MessageChatMemoryAdvisor.builder(chatMemory).build()) //  配置会话记忆Advisor，它会自动调用重写的ChatMemory的add方法，将消息持久化到数据库中
                 .build();
     }
 }

@@ -16,6 +16,6 @@ public interface ChatSessionMapper extends BaseMapper<ChatSession> {
      * @param userId
      * @return
      */
-    @Select("SELECT session_id FROM cs_chat_session WHERE user_id = #{userId}")
+    @Select("SELECT session_id FROM cs_chat_session WHERE user_id = #{userId} ORDER BY created_at DESC")
     List<String> selectSessionIds(@Param("userId") Long userId);
 }

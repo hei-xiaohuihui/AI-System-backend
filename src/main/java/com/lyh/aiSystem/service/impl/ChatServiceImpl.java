@@ -1,6 +1,7 @@
 package com.lyh.aiSystem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lyh.aiSystem.constant.ChatRoleConstant;
 import com.lyh.aiSystem.constant.JwtClaimsConstant;
 import com.lyh.aiSystem.entity.ChatMessage;
@@ -63,7 +64,7 @@ public class ChatServiceImpl implements ChatService {
         // 调用AI模型并保存ai回复信息
         return chatClient.prompt()
                 .user(message)
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID,  sessionId))
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, sessionId))
                 .stream()
                 .content()
                 .doFinally(signalType -> {

@@ -1,6 +1,7 @@
 package com.lyh.aiSystem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lyh.aiSystem.entity.ChatSession;
 import com.lyh.aiSystem.enumeration.ExceptionEnum;
 import com.lyh.aiSystem.exception.BaseException;

@@ -11,6 +11,6 @@ import java.util.List;
 @Mapper
 public interface ChatMessageMapper extends BaseMapper<ChatMessage> {
 
-    @Select("SELECT * FROM cs_chat_message WHERE session_id = #{conversationId} ORDER BY created_at")
+    @Select("SELECT * FROM cs_chat_message WHERE session_id = #{conversationId} ORDER BY created_at ASC")
     List<ChatMessage> getMessagesBySessionId(@Param("conversationId") String conversationId);
 }
