@@ -9,6 +9,7 @@ import com.lyh.aiSystem.enumeration.ExceptionEnum;
 import com.lyh.aiSystem.exception.BaseException;
 import com.lyh.aiSystem.mapper.ChatMessageMapper;
 import com.lyh.aiSystem.mapper.ChatSessionMapper;
+import com.lyh.aiSystem.memory.MySqlChatMemory;
 import com.lyh.aiSystem.service.ChatService;
 import com.lyh.aiSystem.service.ChatSessionService;
 import com.lyh.aiSystem.utils.UserContextUtil;
@@ -16,6 +17,7 @@ import com.lyh.aiSystem.vo.ChatMessageVo;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.UserMessage;
@@ -26,12 +28,12 @@ import reactor.core.publisher.Flux;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 /**
  * @author BigHH
  */
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class ChatServiceImpl implements ChatService {
 
     // 使用构造函数注入
@@ -44,27 +46,36 @@ public class ChatServiceImpl implements ChatService {
     private final ChatMemory chatMemory;
 
     /**
-     *  处理会话
+     * 处理会话
+     * 
      * @param sessionId
      * @param message
      * @return
      */
-//    @Transactional(rollbackFor = Exception.class)
+    // @Transactional(rollbackFor = Exception.class)
     @Override
     public Flux<String> handleChat(String sessionId, String message) {
-        // 创建会话
-        chatSessionService.createSessionIfNotExist(sessionId, userContextUtil.getUserId());
+        Long userId = userContextUtil.getUserId();
 
-        // 调用AI模型并保存AI回复信息
+        // 设置当前用户id到ChatMemory
+        ((MySqlChatMemory) chatMemory).setCurrentUserId(userId);
+
+        // 调用AI模型并保存ai回复信息
         return chatClient.prompt()
                 .user(message)
-                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, sessionId)) // 设置会话id
+                .advisors(a -> a.param(ChatMemory.CONVERSATION_ID,  sessionId))
                 .stream()
-                .content();
+                .content()
+                .doFinally(signalType -> {
+                    log.debug("Chat completed for session: {}", sessionId);
+                    // 清理用户id
+                    ((MySqlChatMemory) chatMemory).setCurrentUserId(null);
+                });
     }
 
     /**
-     *  获取当前登录用户的所有会话id列表
+     * 获取当前登录用户的所有会话id列表
+     * 
      * @return
      */
     @Override
@@ -73,7 +84,8 @@ public class ChatServiceImpl implements ChatService {
     }
 
     /**
-     *  根据会话id获取会话消息记录
+     * 根据会话id获取会话消息记录
+     * 
      * @param sessionId
      * @return
      */
@@ -82,11 +94,14 @@ public class ChatServiceImpl implements ChatService {
         // 检查会话是否输入当前用户
         checkSessionBelongToCurrentUser(sessionId);
         // 获取会话消息记录
-        return chatMemory.get(sessionId).stream().map(msg -> new ChatMessageVo(msg.getMessageType().getValue(), msg.getText())).collect(Collectors.toList());
+        return chatMemory.get(sessionId).stream()
+                .map(msg -> new ChatMessageVo(msg.getMessageType().getValue(), msg.getText()))
+                .collect(Collectors.toList());
     }
 
     /**
-     *  根据会话id删除会话
+     * 根据会话id删除会话
+     * 
      * @param sessionId
      */
     @Override
@@ -97,13 +112,12 @@ public class ChatServiceImpl implements ChatService {
         chatMemory.clear(sessionId);
     }
 
-
     /**
-     *  检查会话是否输入当前用户的辅助方法
+     * 检查会话是否输入当前用户的辅助方法
      */
     private void checkSessionBelongToCurrentUser(String sessionId) {
         Long userId = chatSessionService.getUserIdBySessionId(sessionId);
-        if(!userId.equals(userContextUtil.getUserId())) {
+        if (!userId.equals(userContextUtil.getUserId())) {
             throw new BaseException(ExceptionEnum.CHAT_HISTORY_NOT_BELONG_TO_CURRENT_USER); // 抛出会话记录不属于当前用户异常
         }
     }

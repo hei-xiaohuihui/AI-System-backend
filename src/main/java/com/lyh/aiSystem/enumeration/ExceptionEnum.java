@@ -19,6 +19,7 @@ public enum ExceptionEnum {
     USER_TOKEN_EXPIRED(11005, "Token has expired"),
     USER_TOKEN_INVALID(11006, "Invalid Token"),
     USER_NOT_LOGIN(11007, "用户未登录"),
+    USER_ID_GET_FAIL(11008, "用户id获取失败"),
 
     /*
      *  管理员相关异常
