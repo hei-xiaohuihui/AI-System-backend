@@ -48,7 +48,8 @@ public class RedisQACacheService {
         String counterKey = QA_COMMON_KEY_PREFIX + COUNTER_KEY_PREFIX + sessionIdHash + questionHash;
 
         // 判断缓存是否已满
-        if(redisTemplate.keys(QA_COMMON_KEY_PREFIX).size() >= redisProperties.getMaxCacheSize()) {
+        log.debug("Cache size:{}", redisTemplate.keys(QA_COMMON_KEY_PREFIX + CACHE_KEY_PREFIX +  "*").size());
+        if(redisTemplate.keys(QA_COMMON_KEY_PREFIX + CACHE_KEY_PREFIX + "*").size() >= redisProperties.getMaxCacheSize()) {
             evictLFUCache(); // 执行LFU缓存失效策略
         }
 
@@ -87,6 +88,7 @@ public class RedisQACacheService {
      */
     private void evictLFUCache() {
         // 获取所有访问计数器key
+        // todo 待改进：使用keys可能引发性能问题
         Set<String> counterKeys = redisTemplate.keys(QA_COMMON_KEY_PREFIX + COUNTER_KEY_PREFIX + "*");
 
         if(CollectionUtils.isEmpty(counterKeys)) {
@@ -131,6 +133,7 @@ public class RedisQACacheService {
         String counterKey = QA_COMMON_KEY_PREFIX + COUNTER_KEY_PREFIX + sessionIdHash + "*";
 
         // 删除所有对应的缓存和计数缓存
+        // todo 待改进：使用keys会扫描整个key空间，可能引发效率问题
         redisTemplate.delete(redisTemplate.keys(cacheKey));
         redisTemplate.delete(redisTemplate.keys(counterKey));
     }
@@ -142,7 +145,7 @@ public class RedisQACacheService {
         // 处理问题字符串
         String processedQuestion = question.trim() // 去除字符串前后的空格
                 .toLowerCase(); // 统一转为小写，忽略大小写的差异（提高对同义问题的识别能力）
-        // 计算哈希值转为正数后再转为字符串返回
+        // 计算哈希值并转为正数后再转为字符串返回
         return String.valueOf(Math.abs(processedQuestion.hashCode()));
     }
 }

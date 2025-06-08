@@ -56,7 +56,6 @@ lyh:
   redis:
     cache-expire-time: 36000000 # Redis缓存过期时间（单位毫秒）
     max-cache-size: 1000 # Redis最大缓存条目数（用于LFU缓存失效策略）
-    min-access-count: 2 # 最小访问次数阈值（用于LFU缓存失效策略）
 
 server:
   port: 7816

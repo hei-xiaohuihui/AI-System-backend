@@ -18,7 +18,4 @@ public class RedisProperties {
 
     // 最大缓存条目数
     private long maxCacheSize;
-
-    // 最小访问次数阈值
-    private long minAccessCount;
 }
