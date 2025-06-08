@@ -1,4 +1,4 @@
-package com.lyh.aiSystem.vo;
+package com.lyh.aiSystem.pojo.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

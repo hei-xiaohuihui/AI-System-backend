@@ -1,12 +1,11 @@
 package com.lyh.aiSystem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.lyh.aiSystem.constant.JwtClaimsConstant;
-import com.lyh.aiSystem.dto.UserLoginDto;
-import com.lyh.aiSystem.dto.UserRegisterDto;
-import com.lyh.aiSystem.dto.UserUpdateDto;
-import com.lyh.aiSystem.entity.User;
+import com.lyh.aiSystem.pojo.dto.UserLoginDto;
+import com.lyh.aiSystem.pojo.dto.UserRegisterDto;
+import com.lyh.aiSystem.pojo.dto.UserUpdateDto;
+import com.lyh.aiSystem.pojo.entity.User;
 import com.lyh.aiSystem.enumeration.ExceptionEnum;
 import com.lyh.aiSystem.exception.BaseException;
 import com.lyh.aiSystem.mapper.UserMapper;
@@ -14,9 +13,7 @@ import com.lyh.aiSystem.service.UserService;
 import com.lyh.aiSystem.utils.JwtUtil;
 import com.lyh.aiSystem.utils.MD5Util;
 import com.lyh.aiSystem.utils.UserContextUtil;
-import com.lyh.aiSystem.vo.UserDetailVo;
-import io.jsonwebtoken.Claims;
-import jakarta.servlet.http.HttpServletRequest;
+import com.lyh.aiSystem.pojo.vo.UserDetailVo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;

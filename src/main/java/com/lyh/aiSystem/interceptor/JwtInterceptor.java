@@ -47,16 +47,16 @@ public class JwtInterceptor implements HandlerInterceptor {
         if(!(handler instanceof HandlerMethod)) {
             return true; // 不是控制器方法，直接放行
         }
-        log.info("开始Jwt校验...");
+        log.debug("开始Jwt校验...");
 
         // 从请求头中获取Jwt
         String jwt = request.getHeader(jwtProperties.getTokenHead());
         if(jwt == null || jwt.isEmpty()) {
-            log.info("Jwt缺失！");
+            log.warn("Jwt缺失！");
             throw new BaseException(ExceptionEnum.USER_TOKEN_MISSING); // 用户Token缺失
         }
 
-        log.info("获取到的Jwt: {}", jwt);
+        log.debug("获取到的Jwt: {}", jwt);
         // 去掉Bearer前缀
         if(jwt.startsWith("Bearer ")) {
             jwt = jwt.substring(7);
@@ -66,13 +66,13 @@ public class JwtInterceptor implements HandlerInterceptor {
         try {
             Claims claims = jwtUtil.parseJwt(jwt);
             request.setAttribute(JwtClaimsConstant.USER_CLAIMS, claims); // 将Jwt中解析出来的用户数据保存到请求属性中，方便后续使用
-            log.info("Jwt校验成功！");
+            log.debug("Jwt校验成功！");
             return true;
         } catch(ExpiredJwtException e) {
-            log.info("Jwt已过期！");
+            log.warn("Jwt已过期！");
             throw new BaseException(ExceptionEnum.USER_TOKEN_EXPIRED); // Jwt已过期
         } catch(JwtException e) {
-            log.info("Jwt无效！");
+            log.warn("Jwt无效！");
             throw new BaseException(ExceptionEnum.USER_TOKEN_INVALID); // Jwt无效
         }
     }

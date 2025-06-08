@@ -2,19 +2,13 @@ package com.lyh.aiSystem.controller;
 
 import com.lyh.aiSystem.service.ChatService;
 import com.lyh.aiSystem.utils.Result;
-import com.lyh.aiSystem.utils.UserContextUtil;
-import com.lyh.aiSystem.vo.ChatMessageVo;
+import com.lyh.aiSystem.pojo.vo.ChatMessageVo;
 import lombok.RequiredArgsConstructor;
-import org.springframework.ai.chat.client.ChatClient;
-import org.springframework.ai.chat.memory.ChatMemory;
-import org.springframework.ai.chat.messages.Message;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @author BigHH

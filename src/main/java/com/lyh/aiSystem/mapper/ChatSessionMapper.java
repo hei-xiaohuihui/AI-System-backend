@@ -1,7 +1,7 @@
 package com.lyh.aiSystem.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lyh.aiSystem.entity.ChatSession;
+import com.lyh.aiSystem.pojo.entity.ChatSession;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;

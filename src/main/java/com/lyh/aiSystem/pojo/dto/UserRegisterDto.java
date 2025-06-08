@@ -1,4 +1,4 @@
-package com.lyh.aiSystem.dto;
+package com.lyh.aiSystem.pojo.dto;
 
 import lombok.Data;
 

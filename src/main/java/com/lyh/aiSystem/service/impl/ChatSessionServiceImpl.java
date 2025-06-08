@@ -1,13 +1,11 @@
 package com.lyh.aiSystem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.lyh.aiSystem.entity.ChatSession;
+import com.lyh.aiSystem.pojo.entity.ChatSession;
 import com.lyh.aiSystem.enumeration.ExceptionEnum;
 import com.lyh.aiSystem.exception.BaseException;
 import com.lyh.aiSystem.mapper.ChatSessionMapper;
 import com.lyh.aiSystem.service.ChatSessionService;
-import com.lyh.aiSystem.utils.UserContextUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

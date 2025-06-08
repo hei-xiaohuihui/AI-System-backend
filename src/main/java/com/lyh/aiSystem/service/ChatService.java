@@ -1,8 +1,9 @@
 package com.lyh.aiSystem.service;
 
-import com.lyh.aiSystem.vo.ChatMessageVo;
+import com.lyh.aiSystem.pojo.vo.ChatMessageVo;
 import reactor.core.publisher.Flux;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface ChatService {

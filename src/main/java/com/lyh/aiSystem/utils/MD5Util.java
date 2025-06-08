@@ -18,7 +18,7 @@ public class MD5Util {
     private String SALT;
 
     /**
-     *  MD5加密工具：用于将新注册的用户的密码使用MD5加密，并转为Base64编码返回
+     *  登录密码MD5加密：用于将新注册的用户的密码使用MD5加密，并转为Base64编码返回
      * @param str
      * @return Base64编码后的MD5字符串
      */
@@ -39,4 +39,23 @@ public class MD5Util {
 //        }
 //        return sb.toString();
     }
+
+//    /**
+//     *  redis缓存问题的MD5加密：使用MD5加密用户输入的问题，作为问题的哈希
+//     * @param question
+//     * @return
+//     */
+//    public String getQuestionMD5(String question) throws NoSuchAlgorithmException {
+//        // 创建MD5加密对象
+//        MessageDigest md5 = MessageDigest.getInstance("MD5");
+//        // 将问题进行md5加密
+//        byte[] bytes = md5.digest(question.getBytes());
+//        // 将加密后的字节数组转换为十六进制字符串
+//        StringBuilder sb = new StringBuilder();
+//        for(byte b : bytes) {
+//            sb.append(String.format("%02", b & 0xff));
+//        }
+//        return sb.toString();
+//    }
+
 }

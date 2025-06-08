@@ -1,8 +1,8 @@
 package com.lyh.aiSystem.controller;
 
-import com.lyh.aiSystem.dto.UserLoginDto;
-import com.lyh.aiSystem.dto.UserRegisterDto;
-import com.lyh.aiSystem.dto.UserUpdateDto;
+import com.lyh.aiSystem.pojo.dto.UserLoginDto;
+import com.lyh.aiSystem.pojo.dto.UserRegisterDto;
+import com.lyh.aiSystem.pojo.dto.UserUpdateDto;
 import com.lyh.aiSystem.service.UserService;
 import com.lyh.aiSystem.utils.Result;
 import org.springframework.web.bind.annotation.*;

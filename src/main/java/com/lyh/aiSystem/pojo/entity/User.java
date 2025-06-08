@@ -1,4 +1,4 @@
-package com.lyh.aiSystem.entity;
+package com.lyh.aiSystem.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

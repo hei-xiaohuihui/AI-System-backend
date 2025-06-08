@@ -2,7 +2,7 @@ package com.lyh.aiSystem.mapper;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.lyh.aiSystem.entity.User;
+import com.lyh.aiSystem.pojo.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
