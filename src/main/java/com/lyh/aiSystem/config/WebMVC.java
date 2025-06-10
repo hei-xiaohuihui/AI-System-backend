@@ -42,8 +42,10 @@ public class WebMVC implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(jwtInterceptor) // 添加拦截器
                 .addPathPatterns("/user/**") // 拦截所有/user/**路径
+                .addPathPatterns("/admin/**") // 连接所有/admin/**路径
                 .excludePathPatterns("/user/auth/register", "/user/auth/login"
 //                    ,  "/user/chat/model"
+                      , "/admin/auth/login"
                 ); // 不拦截/user/register和/user/login路径
     }
 }

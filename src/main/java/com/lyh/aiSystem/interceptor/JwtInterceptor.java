@@ -65,7 +65,7 @@ public class JwtInterceptor implements HandlerInterceptor {
         // 校验Jwt
         try {
             Claims claims = jwtUtil.parseJwt(jwt);
-            request.setAttribute(JwtClaimsConstant.USER_CLAIMS, claims); // 将Jwt中解析出来的用户数据保存到请求属性中，方便后续使用
+            request.setAttribute(JwtClaimsConstant.SYSTEM_CLAIMS, claims); // 将Jwt中解析出来的用户数据保存到请求属性中，方便后续使用
             log.debug("Jwt校验成功！");
             return true;
         } catch(ExpiredJwtException e) {

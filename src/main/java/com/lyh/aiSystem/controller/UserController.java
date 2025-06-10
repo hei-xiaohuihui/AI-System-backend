@@ -5,6 +5,7 @@ import com.lyh.aiSystem.pojo.dto.UserRegisterDto;
 import com.lyh.aiSystem.pojo.dto.UserUpdateDto;
 import com.lyh.aiSystem.service.UserService;
 import com.lyh.aiSystem.utils.Result;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -12,6 +13,7 @@ import javax.validation.Valid;
 /**
  * @author BigHH
  */
+@RequiredArgsConstructor
 @RestController
 @RequestMapping("/user/auth")
 public class UserController {
@@ -19,9 +21,9 @@ public class UserController {
     private final UserService userService;
 
     // 使用构造函数注入
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+//    public UserController(UserService userService) {
+//        this.userService = userService;
+//    }
 
     /**
      *  用户注册

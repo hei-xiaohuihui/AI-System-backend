@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @TableName("cs_chat_session")
 public class ChatSession {
 
-    @TableId(value = "id", type = IdType.AUTO)
     private Long id;
 
     private Long userId;

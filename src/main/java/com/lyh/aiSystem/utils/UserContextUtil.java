@@ -10,7 +10,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * @author BigHH
- *  获取用户上下文信息工具类
+ *  获取普通用户上下文信息工具类
  */
 @RequiredArgsConstructor
 @Component
@@ -21,7 +21,7 @@ public class UserContextUtil {
     private Claims getClaims() {
 //        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 
-        return (Claims) request.getAttribute(JwtClaimsConstant.USER_CLAIMS);
+        return (Claims) request.getAttribute(JwtClaimsConstant.SYSTEM_CLAIMS);
     }
 
 //    private HttpServletRequest getCurrentRequest() {

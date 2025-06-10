@@ -6,10 +6,10 @@ import javax.validation.constraints.Size;
 
 /**
  * @author BigHH
- *  用户修改信息数据传输对象
+ *  管理员更新信息数据传输对象
  */
 @Data
-public class UserUpdateDto {
+public class AdminUpdateDto {
 
     @Size(min = 6, max = 20, message = "密码长度必须在6到20之间")
     private String password;
@@ -18,9 +18,5 @@ public class UserUpdateDto {
 
     private String phone;
 
-//    private String avatarUrl;
-
     private Byte gender;
-
-//    private Byte status;
 }

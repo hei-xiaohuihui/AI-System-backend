@@ -6,7 +6,17 @@ spring:
     ollama:
       base-url: http://localhost:11434 # 模型接口地址
       chat:
-        model: deepseek-r1:7b # 使用的模型名称
+#        model: deepseek-r1:7b # 使用的模型名称
+        model: qwen3:8b # 使用的模型名称
+    openai:
+      # 阿里模型配置
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+      api-key: ${DASHSCOPE_API_KEY}
+      embedding: # 向量模型配置
+        options:
+          model: text-embedding-v4 # 模型名称
+          dimensions: 1024 # 向量维度
+
   data:
     # Redis配置
     redis:
@@ -29,7 +39,7 @@ spring:
 
 # mybatis-plus
 mybatis-plus:
-  mapper-locations: classpath:mappers/*.xml
+#  mapper-locations: classpath:mappers/*.xml
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
