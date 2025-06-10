@@ -62,18 +62,6 @@ public class MySqlChatMemory implements ChatMemory {
         // 1. 创建会话表
         chatSessionService.createSessionIfNotExist(conversationId, currentUserId);
 
-//        ChatSession existingSession = chatSessionMapper.selectOne(
-//                new QueryWrapper<ChatSession>().eq("session_id", conversationId));
-//
-//        if (existingSession == null) {
-//            // 创建新会话
-//            ChatSession newSession = ChatSession.builder()
-//                    .sessionId(conversationId)
-//                    .userId(currentUserId)
-//                    .build();
-//            chatSessionMapper.insert(newSession);
-//        }
-
         // 2. 处理会话消息
         List<ChatMessage> chatMessageList = messages.stream().map(msg -> {
             ChatMessage chatMessage = ChatMessage.builder()

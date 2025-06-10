@@ -1,4 +1,4 @@
-package com.lyh.aiSystem.controller;
+package com.lyh.aiSystem.controller.user;
 
 import com.lyh.aiSystem.pojo.dto.UserLoginDto;
 import com.lyh.aiSystem.pojo.dto.UserRegisterDto;

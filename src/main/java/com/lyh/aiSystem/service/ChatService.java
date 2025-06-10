@@ -10,9 +10,9 @@ public interface ChatService {
 
     Flux<String> handleChat(String sessionId, String message);
 
-    List<String> getSessionIds();
-
-    List<ChatMessageVo> getHistoryBySessionId(String sessionId);
-
-    void deleteSessionById(String sessionId);
+//    List<String> getSessionIds();
+//
+//    List<ChatMessageVo> getHistoryBySessionId(String sessionId);
+//
+//    void deleteSessionById(String sessionId);
 }

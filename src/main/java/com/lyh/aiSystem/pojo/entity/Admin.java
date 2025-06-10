@@ -29,6 +29,9 @@ public class Admin {
 
     private String avatarUrl;
 
+    // 个人简介: 仅适用于role为LECTURER的管理员用户
+    private String bio;
+
     private Byte gender;
 
     private Byte status;

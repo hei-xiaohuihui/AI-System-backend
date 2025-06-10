@@ -36,8 +36,6 @@ public class ChatServiceImpl implements ChatService {
 
     private final UserContextUtil userContextUtil;
 
-    private final ChatSessionService chatSessionService;
-
     private final ChatMemory chatMemory;
 
     private final RedisQACacheService qaCacheService;
@@ -90,59 +88,6 @@ public class ChatServiceImpl implements ChatService {
                     }
                 })
                 .doFinally(signalType -> log.debug("Chat completed for session:{}", sessionId));
-    }
-
-    /**
-     * 获取当前登录用户的所有会话id列表
-     * 
-     * @return
-     */
-    @Override
-    public List<String> getSessionIds() {
-        return chatSessionService.getSessionIdsByUserId(userContextUtil.getUserId());
-    }
-
-    /**
-     * 根据会话id获取会话消息记录
-     * 
-     * @param sessionId
-     * @return
-     */
-    @Override
-    public List<ChatMessageVo> getHistoryBySessionId(String sessionId) {
-        // 检查会话是否输入当前用户
-        checkSessionBelongToCurrentUser(sessionId);
-        // 获取会话消息记录
-        return chatMemory.get(sessionId).stream()
-                .map(msg -> new ChatMessageVo(msg.getMessageType().getValue(), msg.getText()))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * 根据会话id删除会话
-     * 
-     * @param sessionId
-     */
-    @Override
-    public void deleteSessionById(String sessionId) {
-        // 检查会话是否输入当前用户
-        checkSessionBelongToCurrentUser(sessionId);
-
-        // 删除会话包含的所有问题的答案、计数缓存
-        qaCacheService.deleteCacheBySessionId(sessionId);
-
-        // 删除会话及所有会话消息
-        chatMemory.clear(sessionId);
-    }
-
-    /**
-     * 检查会话是否输入当前用户的辅助方法
-     */
-    private void checkSessionBelongToCurrentUser(String sessionId) {
-        Long userId = chatSessionService.getUserIdBySessionId(sessionId);
-        if (!userId.equals(userContextUtil.getUserId())) {
-            throw new BaseException(ExceptionEnum.CHAT_HISTORY_NOT_BELONG_TO_CURRENT_USER); // 抛出会话记录不属于当前用户异常
-        }
     }
 
 }

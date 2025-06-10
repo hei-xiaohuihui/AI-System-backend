@@ -1,12 +1,10 @@
-package com.lyh.aiSystem.controller;
+package com.lyh.aiSystem.controller.ai;
 
-import com.lyh.aiSystem.service.ChatService;
-import com.lyh.aiSystem.utils.Result;
 import com.lyh.aiSystem.pojo.vo.ChatMessageVo;
+import com.lyh.aiSystem.service.ChatSessionService;
+import com.lyh.aiSystem.utils.Result;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Flux;
 
 import java.util.List;
 
@@ -15,26 +13,10 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/user/chat")
-public class ChatController {
+@RequestMapping("/user/session")
+public class ChatSessionController {
 
-    private final ChatService chatService;
-
-//    private final ChatMemory chatMemory;
-
-//    private final UserContextUtil userContextUtil;
-
-    /**
-     *  用于与AI聊天接口
-     * @param sessionId
-     * @param message
-     * @return
-     */
-    @GetMapping(value ="/model", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<String> chat(@RequestParam("sessionId") String sessionId,
-                             @RequestParam("message") String message) {
-        return chatService.handleChat(sessionId, message);
-    }
+    private final ChatSessionService chatSessionService;
 
     /**
      *  获取当前登录用户的所有会话id列表
@@ -42,7 +24,7 @@ public class ChatController {
      */
     @GetMapping("/sessionIds")
     public Result getSessionIds() {
-        List<String> sessionIdList = chatService.getSessionIds();
+        List<String> sessionIdList = chatSessionService.getSessionIds();
         return Result.success(sessionIdList);
     }
 
@@ -53,7 +35,7 @@ public class ChatController {
      */
     @GetMapping("/history")
     public Result getHistory(@RequestParam("sessionId") String sessionId) {
-        List<ChatMessageVo> messageVoList = chatService.getHistoryBySessionId(sessionId);
+        List<ChatMessageVo> messageVoList = chatSessionService.getHistoryBySessionId(sessionId);
 //        List<ChatMessageVo> messageVoList = chatMemory.get(sessionId).stream().map(msg -> new ChatMessageVo(msg.getMessageType().getValue(), msg.getText())).collect(Collectors.toList());
         return Result.success(messageVoList);
     }
@@ -63,7 +45,7 @@ public class ChatController {
      */
     @DeleteMapping("/delete")
     public Result deleteSession(@RequestParam("sessionId") String sessionId) {
-        chatService.deleteSessionById(sessionId);
+        chatSessionService.deleteSessionById(sessionId);
         return Result.success();
     }
 }

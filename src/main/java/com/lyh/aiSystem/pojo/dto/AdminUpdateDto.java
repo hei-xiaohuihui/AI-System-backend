@@ -19,4 +19,8 @@ public class AdminUpdateDto {
     private String phone;
 
     private Byte gender;
+
+    private String bio;
+
+    private Byte status;
 }
