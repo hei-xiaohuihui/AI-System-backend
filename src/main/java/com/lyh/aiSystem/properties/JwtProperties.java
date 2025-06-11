@@ -13,8 +13,11 @@ import org.springframework.context.annotation.Configuration;
 @Data
 public class JwtProperties {
 
-    // Jwt密钥
-    private String secretKey;
+    // 用户端Jwt密钥
+    private String userSecretKey;
+
+    // 管理端Jwt密钥
+    private String adminSecretKey;
 
     // Jwt过期时间
     private long expireTime;

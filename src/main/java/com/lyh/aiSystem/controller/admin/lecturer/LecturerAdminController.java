@@ -1,7 +1,9 @@
-package com.lyh.aiSystem.controller.admin;
+package com.lyh.aiSystem.controller.admin.lecturer;
 
 import com.lyh.aiSystem.service.AdminService;
+import com.lyh.aiSystem.utils.Result;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,5 +18,8 @@ public class LecturerAdminController {
 
     private final AdminService adminService;
 
-
+    @GetMapping("/test")
+    public Result test() {
+        return Result.success();
+    }
 }

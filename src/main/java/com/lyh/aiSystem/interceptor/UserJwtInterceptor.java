@@ -18,12 +18,12 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 /**
  * @author BigHH
- *  Jwt校验拦截器
+ *  Jwt校验拦截器——用户端
  */
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class JwtInterceptor implements HandlerInterceptor {
+public class UserJwtInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;
 
@@ -47,16 +47,16 @@ public class JwtInterceptor implements HandlerInterceptor {
         if(!(handler instanceof HandlerMethod)) {
             return true; // 不是控制器方法，直接放行
         }
-        log.debug("开始Jwt校验...");
+        log.debug("User: 开始Jwt校验...");
 
         // 从请求头中获取Jwt
         String jwt = request.getHeader(jwtProperties.getTokenHead());
         if(jwt == null || jwt.isEmpty()) {
-            log.warn("Jwt缺失！");
+            log.warn("User: Jwt缺失！");
             throw new BaseException(ExceptionEnum.USER_TOKEN_MISSING); // 用户Token缺失
         }
 
-        log.debug("获取到的Jwt: {}", jwt);
+        log.debug("User: 获取到的Jwt: {}", jwt);
         // 去掉Bearer前缀
         if(jwt.startsWith("Bearer ")) {
             jwt = jwt.substring(7);
@@ -64,15 +64,15 @@ public class JwtInterceptor implements HandlerInterceptor {
 
         // 校验Jwt
         try {
-            Claims claims = jwtUtil.parseJwt(jwt);
+            Claims claims = jwtUtil.parseJwt(jwtProperties.getUserSecretKey(), jwt);
             request.setAttribute(JwtClaimsConstant.SYSTEM_CLAIMS, claims); // 将Jwt中解析出来的用户数据保存到请求属性中，方便后续使用
-            log.debug("Jwt校验成功！");
+            log.debug("User: Jwt校验成功！");
             return true;
         } catch(ExpiredJwtException e) {
-            log.warn("Jwt已过期！");
+            log.warn("User: Jwt已过期！");
             throw new BaseException(ExceptionEnum.USER_TOKEN_EXPIRED); // Jwt已过期
         } catch(JwtException e) {
-            log.warn("Jwt无效！");
+            log.warn("User: Jwt无效！");
             throw new BaseException(ExceptionEnum.USER_TOKEN_INVALID); // Jwt无效
         }
     }

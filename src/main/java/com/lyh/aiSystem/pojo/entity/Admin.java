@@ -20,6 +20,10 @@ public class Admin {
 
     private String password;
 
+    private String lecturerName;
+
+    private String lecturerTitle;
+
 //    private Role role;
     private String role;
 

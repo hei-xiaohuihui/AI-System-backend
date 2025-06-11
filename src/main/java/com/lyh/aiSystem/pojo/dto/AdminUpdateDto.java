@@ -14,6 +14,10 @@ public class AdminUpdateDto {
     @Size(min = 6, max = 20, message = "密码长度必须在6到20之间")
     private String password;
 
+    private String lecturerName;
+
+    private String lecturerTitle;
+
     private String email;
 
     private String phone;

@@ -9,6 +9,7 @@ import com.lyh.aiSystem.pojo.entity.User;
 import com.lyh.aiSystem.enumeration.ExceptionEnum;
 import com.lyh.aiSystem.exception.BaseException;
 import com.lyh.aiSystem.mapper.UserMapper;
+import com.lyh.aiSystem.properties.JwtProperties;
 import com.lyh.aiSystem.service.UserService;
 import com.lyh.aiSystem.utils.JwtUtil;
 import com.lyh.aiSystem.utils.MD5Util;
@@ -36,6 +37,8 @@ public class UserServiceImpl implements UserService {
     private final MD5Util md5Util;
 
     private final JwtUtil jwtUtil;
+
+    private final JwtProperties jwtProperties;
 
     private final UserContextUtil userContextUtil;
 
@@ -94,7 +97,7 @@ public class UserServiceImpl implements UserService {
         dataMap.put(JwtClaimsConstant.USER_ID, user.getId()); // 用户ID
         dataMap.put(JwtClaimsConstant.USER_NAME, user.getUsername()); // 用户名
         // 返回生成的Jwt
-        return jwtUtil.generateJwt(dataMap);
+        return jwtUtil.generateJwt(jwtProperties.getUserSecretKey(), dataMap);
     }
 
     /**

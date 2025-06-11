@@ -1,10 +1,9 @@
 package com.lyh.aiSystem.config;
 
-import com.lyh.aiSystem.interceptor.JwtInterceptor;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
+import com.lyh.aiSystem.interceptor.AdminJwtInterceptor;
+import com.lyh.aiSystem.interceptor.UserJwtInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.filter.RequestContextFilter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -13,14 +12,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * @author BigHH
  *  WebMvc配置类
  */
+@RequiredArgsConstructor
 @Configuration
 public class WebMVC implements WebMvcConfigurer {
 
-    private final JwtInterceptor jwtInterceptor;
+    private final UserJwtInterceptor userJwtInterceptor;
 
-    public WebMVC(JwtInterceptor jwtInterceptor) {
-        this.jwtInterceptor = jwtInterceptor;
-    }
+    private final AdminJwtInterceptor adminJwtInterceptor;
 
     /**
      *  跨域配置
@@ -40,12 +38,17 @@ public class WebMVC implements WebMvcConfigurer {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor) // 添加拦截器
+        // 添加用户端Jwt拦截器
+        registry.addInterceptor(userJwtInterceptor)
                 .addPathPatterns("/user/**") // 拦截所有/user/**路径
-                .addPathPatterns("/admin/**") // 连接所有/admin/**路径
                 .excludePathPatterns("/user/auth/register", "/user/auth/login"
 //                    ,  "/user/chat/model"
-                      , "/admin/auth/login"
                 ); // 不拦截/user/register和/user/login路径
+
+
+        // 添加管理端Jwt拦截器
+        registry.addInterceptor(adminJwtInterceptor)
+                .addPathPatterns("/admin/**")
+                .excludePathPatterns("/admin/auth/login");
     }
 }

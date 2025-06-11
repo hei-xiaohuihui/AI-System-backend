@@ -34,21 +34,25 @@ public class JwtUtil {
         this.jwtProperties = jwtProperties;
     }
 
-    // 生成hmac类型密钥
-    private Key jwtKey;
-    @PostConstruct
-    public void init() {
-        jwtKey = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
-    }
+//    // 生成hmac类型密钥
+//    private Key jwtKey;
+//    @PostConstruct
+//    public void init() {
+//        jwtKey = Keys.hmacShaKeyFor(jwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
+//    }
 
-//    Key jwtKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));// 这段代码在字段声明时被执行，此时secretKey还没有被@Value注入，导致NullPointerException
+      // 这段代码在字段声明时被执行，此时secretKey还没有被@Value注入，导致NullPointerException
+//    Key jwtKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
 
     /**
      *  生成Jwt
+     * @param secretKey
      * @param dataMap
      * @return
      */
-    public String generateJwt(Map<String, Object> dataMap) {
+    public String generateJwt(String secretKey, Map<String, Object> dataMap) {
+        // 生成hmac类型密钥
+        Key jwtKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         return Jwts.builder()
                 .signWith(jwtKey, SignatureAlgorithm.HS256) // 设置签名算法和密钥
                 .addClaims(dataMap) // 添加自定义数据
@@ -58,10 +62,12 @@ public class JwtUtil {
 
     /**
      *  解析Jwt
+     * @param secretKey
      * @param jwt
      * @return
      */
-    public Claims parseJwt(String jwt) {
+    public Claims parseJwt(String secretKey, String jwt) {
+        Key jwtKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         return Jwts.parserBuilder()
                 .setSigningKey(jwtKey) // 设置签名密钥
                 .build() // 构建parser解析器

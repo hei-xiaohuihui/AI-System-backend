@@ -1,15 +1,22 @@
 package com.lyh.aiSystem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.lyh.aiSystem.constant.AdminRoleConstant;
 import com.lyh.aiSystem.constant.JwtClaimsConstant;
 import com.lyh.aiSystem.enumeration.ExceptionEnum;
 import com.lyh.aiSystem.exception.BaseException;
 import com.lyh.aiSystem.mapper.AdminMapper;
+import com.lyh.aiSystem.mapper.UserMapper;
 import com.lyh.aiSystem.pojo.dto.AdminCreateDto;
 import com.lyh.aiSystem.pojo.dto.AdminLoginDto;
 import com.lyh.aiSystem.pojo.dto.AdminUpdateDto;
+import com.lyh.aiSystem.pojo.dto.UserPageDto;
 import com.lyh.aiSystem.pojo.entity.Admin;
+import com.lyh.aiSystem.pojo.entity.User;
+import com.lyh.aiSystem.pojo.vo.UserPageVo;
+import com.lyh.aiSystem.properties.JwtProperties;
 import com.lyh.aiSystem.service.AdminService;
 import com.lyh.aiSystem.utils.AdminContextUtil;
 import com.lyh.aiSystem.utils.JwtUtil;
@@ -22,8 +29,9 @@ import org.springframework.util.StringUtils;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -40,7 +48,11 @@ public class AdminServiceImpl implements AdminService {
 
     private final JwtUtil jwtUtil;
 
+    private final JwtProperties jwtProperties;
+
     private final AdminContextUtil adminContextUtil;
+
+    private final UserMapper  userMapper;
 
     /**
      *  管理员登录
@@ -69,7 +81,7 @@ public class AdminServiceImpl implements AdminService {
         dataMap.put(JwtClaimsConstant.ADMIN_ROLE, admin.getRole());
         dataMap.put(JwtClaimsConstant.ADMIN_NAME, admin.getUsername());
         // 返回生成的Jwt
-        return jwtUtil.generateJwt(dataMap);
+        return jwtUtil.generateJwt(jwtProperties.getAdminSecretKey(), dataMap);
     }
 
     /**
@@ -109,10 +121,7 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public void createAdmin(AdminCreateDto adminCreateDto) {
         // 判断当前登录用户是否是超级管理员
-        log.debug("Role:{}", adminContextUtil.getAdminRole());
-        if(!Objects.equals(adminContextUtil.getAdminRole(), AdminRoleConstant.ADMIN_ROLE_SUPER_ADMIN)) {
-            throw new BaseException(ExceptionEnum.ADMIN_NOT_SUPPER_ADMIN); // 当前登录用户不是超级管理员，抛出异常
-        }
+        isSuperAdmin();
 
         // 判断要创建的管理员是否已存在
         Admin admin = adminMapper.selectOne(new QueryWrapper<Admin>().eq("username", adminCreateDto.getUsername()));
@@ -137,12 +146,88 @@ public class AdminServiceImpl implements AdminService {
     }
 
     /**
+     *  超级管理员分页查询普通用户信息
+     * @param userPageDto
+     * @return
+     */
+    @Override
+    public IPage<UserPageVo> userPage(UserPageDto userPageDto) {
+        isSuperAdmin();
+        // 创建分页对象
+        Page<User> page = new Page<>(userPageDto.getPageNum(), userPageDto.getPageSize());
+
+        // 创建查询条件
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        if(StringUtils.hasText(userPageDto.getUsername())) {
+            queryWrapper.like("username", userPageDto.getUsername());
+        }
+        if(StringUtils.hasText(userPageDto.getEmail())) {
+            queryWrapper.like("email", userPageDto.getEmail());
+        }
+        if(StringUtils.hasText(userPageDto.getPhone())) {
+            queryWrapper.like("phone", userPageDto.getPhone());
+        }
+        if(userPageDto.getStatus() != null) {
+            queryWrapper.eq("status", userPageDto.getStatus());
+        }
+
+        // 进行分页查询
+        IPage<User> userPage = userMapper.selectPage(page, queryWrapper);
+        // 实体列表转为Vo列表
+        List<UserPageVo> voList = userPage.getRecords().stream().map(user -> {
+            UserPageVo vo = new UserPageVo();
+            BeanUtils.copyProperties(user, vo);
+            return vo;
+        }).collect(Collectors.toList());
+
+        // 构造分页返回对象
+        Page<UserPageVo> userPageVo = new Page<>();
+        userPageVo.setCurrent(userPage.getCurrent()); // 设置当前页码
+        userPageVo.setSize(userPage.getSize()); // 设置每页大小
+        userPageVo.setTotal(userPage.getTotal());
+        userPageVo.setRecords(voList);
+        return userPageVo;
+    }
+
+    /**
+     *  超级管理员更新普通用户账户状态
+     * @param userId
+     * @param status
+     */
+    @Override
+    public void updateUserStatus(Long userId, Byte status) {
+        isSuperAdmin();
+
+        User user = userMapper.selectOne(new QueryWrapper<User>().eq("id", userId));
+        if(user == null) {
+            throw new BaseException(ExceptionEnum.USER_NOT_EXIST);
+        }
+
+        // 更新用户信息
+        user.setStatus(status);
+        int updateResult = userMapper.updateById(user);
+        if(updateResult == 0) {
+            throw new BaseException(ExceptionEnum.DB_UPDATE_ERROR);
+        }
+    }
+
+    /**
      *  判断AdminUpdateDto是否有字段不为空
      */
-    public boolean isDtoEffective(AdminUpdateDto adminUpdateDto) {
+    private boolean isDtoEffective(AdminUpdateDto adminUpdateDto) {
         return StringUtils.hasText(adminUpdateDto.getPassword()) ||
                 StringUtils.hasText(adminUpdateDto.getEmail()) ||
                 StringUtils.hasText(adminUpdateDto.getPhone()) ||
                 adminUpdateDto.getGender() != null;
+    }
+
+    /**
+     *  判断是否是超级管理员
+     */
+    private void isSuperAdmin() {
+        boolean isSuperAdmin = adminContextUtil.getAdminRole().equals(AdminRoleConstant.ADMIN_ROLE_SUPER_ADMIN);
+        if(!isSuperAdmin) {
+            throw new BaseException(ExceptionEnum.ADMIN_NOT_SUPPER_ADMIN);
+        }
     }
 }

@@ -58,9 +58,9 @@ lyh:
     salt: a6dsf4!8924a**3/3asdf. # MD5加密时使用的盐值
   # Jwt
   jwt:
-    secret-key: 147qaz8522434d/*safjiweir47891!qwexuzigeuiib # Jwt密钥
+    user_secret-key: 147qaz8522434d/*safjiweir47891!qwexuzigeuiib # 用户端Jwt密钥
+    admin_secret-key: 1/asdfkjwlk23985hsda89weut3q2n4ljnof9J#(P*%&4w # 管理端Jwt密钥
     expire-time: 36000000 # Jwt过期时间（单位毫秒）
-#    expire-time: 20000
     token-head: Authorization # 保存Jwt的字段名称
   # Redis
   redis:
