@@ -9,12 +9,10 @@ import com.lyh.aiSystem.enumeration.ExceptionEnum;
 import com.lyh.aiSystem.exception.BaseException;
 import com.lyh.aiSystem.mapper.AdminMapper;
 import com.lyh.aiSystem.mapper.UserMapper;
-import com.lyh.aiSystem.pojo.dto.AdminCreateDto;
-import com.lyh.aiSystem.pojo.dto.AdminLoginDto;
-import com.lyh.aiSystem.pojo.dto.AdminUpdateDto;
-import com.lyh.aiSystem.pojo.dto.UserPageDto;
+import com.lyh.aiSystem.pojo.dto.*;
 import com.lyh.aiSystem.pojo.entity.Admin;
 import com.lyh.aiSystem.pojo.entity.User;
+import com.lyh.aiSystem.pojo.vo.AdminPageVo;
 import com.lyh.aiSystem.pojo.vo.UserPageVo;
 import com.lyh.aiSystem.properties.JwtProperties;
 import com.lyh.aiSystem.service.AdminService;
@@ -61,6 +59,13 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public String adminLogin(AdminLoginDto adminLoginDto) {
+        // 先检查是否是管理员
+        // 根据用户名查询
+//        Admin one = adminMapper.selectOne(new QueryWrapper<Admin>().eq("username", adminLoginDto.getUsername()));
+//        if(one == null) {
+//            throw new BaseException(ExceptionEnum.ADMIN_NOT_EXIST); // 抛出管理员不存在异常
+//        }
+
         // 对用户输入密码进行MD5加密
         String md5Password;
         try {
@@ -190,7 +195,77 @@ public class AdminServiceImpl implements AdminService {
     }
 
     /**
-     *  超级管理员更新普通用户账户状态
+     *  超级管理员分页查询讲师信息
+     * @param adminPageDto
+     * @return
+     */
+    @Override
+    public IPage<AdminPageVo> adminPage(AdminPageDto adminPageDto) {
+        isSuperAdmin();
+        // 创建分页对象
+        Page<Admin> page = new Page<>(adminPageDto.getPageNum(), adminPageDto.getPageSize());
+        // 创建查询条件
+        QueryWrapper<Admin> queryWrapper = new QueryWrapper<>();
+        if(StringUtils.hasText(adminPageDto.getLecturerName())) {
+            queryWrapper.like("lecturer_name", adminPageDto.getLecturerName());
+        }
+        if(StringUtils.hasText(adminPageDto.getLecturerTitle())) {
+            queryWrapper.like("lecturer_title", adminPageDto.getLecturerTitle());
+        }
+        if(StringUtils.hasText(adminPageDto.getEmail())) {
+            queryWrapper.like("email", adminPageDto.getEmail());
+        }
+        if(StringUtils.hasText(adminPageDto.getPhone())) {
+            queryWrapper.like("phone", adminPageDto.getPhone());
+        }
+        if(adminPageDto.getStatus() != null) {
+            queryWrapper.eq("status", adminPageDto.getStatus());
+        }
+
+        // 进行分页查询
+        IPage<Admin> adminPage = adminMapper.selectPage(page, queryWrapper);
+        // 实体列表转为Vo列表
+        List<AdminPageVo> voList = adminPage.getRecords().stream()
+            .filter(admin -> !admin.getRole().equals(AdminRoleConstant.ADMIN_ROLE_SUPER_ADMIN)) // 排除超级管理员
+            .map(admin -> {
+                AdminPageVo vo = new AdminPageVo();
+                BeanUtils.copyProperties(admin, vo);
+                return vo;
+        }).collect(Collectors.toList());
+
+        // 构造分页返回对象
+        Page<AdminPageVo> adminPageVo = new Page<>();
+        adminPageVo.setCurrent(adminPage.getCurrent()); // 设置当前页码
+        adminPageVo.setSize(adminPage.getSize()); // 设置每页大小
+        adminPageVo.setTotal(adminPage.getTotal());
+        adminPageVo.setRecords(voList);
+        return adminPageVo;
+    }
+
+    /**
+     *  超级管理员更新讲师账户状态
+     * @param adminId
+     * @param status
+     */
+    @Override
+    public void updateAdminStatus(Long adminId, Byte status) {
+        isSuperAdmin();
+
+        Admin admin = adminMapper.selectOne(new QueryWrapper<Admin>().eq("id", adminId));
+        if(admin == null) {
+            throw new BaseException(ExceptionEnum.ADMIN_NOT_EXIST);
+        }
+
+        // 更新讲师账户状态
+        admin.setStatus(status);
+        int updateResult = adminMapper.updateById(admin);
+        if(updateResult == 0) {
+            throw new BaseException(ExceptionEnum.DB_UPDATE_ERROR);
+        }
+    }
+
+    /**
+     *  超级管理员更新学生账户状态
      * @param userId
      * @param status
      */

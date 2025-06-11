@@ -1,6 +1,7 @@
 package com.lyh.aiSystem.controller.admin.superAdmin;
 
 import com.lyh.aiSystem.pojo.dto.AdminCreateDto;
+import com.lyh.aiSystem.pojo.dto.AdminPageDto;
 import com.lyh.aiSystem.pojo.dto.UserPageDto;
 import com.lyh.aiSystem.service.AdminService;
 import com.lyh.aiSystem.utils.Result;
@@ -32,17 +33,39 @@ public class SuperAdminController {
     }
 
     /**
-     *  超级管理员分页查询普通用户信息接口
+     *  超级管理员分页查询讲师信息接口
+     * @param adminPageDto
+     * @return
+     */
+    @GetMapping("/adminPage")
+    public Result adminPage(AdminPageDto adminPageDto) {
+        return Result.success(adminService.adminPage(adminPageDto));
+    }
+
+    /**
+     *  超级管理员更新讲师账户状态
+     * @param adminId
+     * @param status
+     * @return
+     */
+    @PostMapping("/updateAdminStatus")
+    public Result updateAdminStatus(@RequestParam("adminId") Long adminId, @RequestParam("status") Byte status) {
+        adminService.updateAdminStatus(adminId, status);
+        return Result.success();
+    }
+
+    /**
+     *  超级管理员分页查询学生信息接口
      * @param userPageDto
      * @return
      */
-    @PostMapping("/userPage")
+    @GetMapping("/userPage")
     public Result userPage(UserPageDto userPageDto) {
         return Result.success(adminService.userPage(userPageDto));
     }
 
     /**
-     *  超级管理员更新普通管理员状态接口
+     *  超级管理员更新学生账户状态
      * @param userId
      * @param status
      * @return

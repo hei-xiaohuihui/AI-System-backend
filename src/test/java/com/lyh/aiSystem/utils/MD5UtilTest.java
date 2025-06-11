@@ -17,7 +17,7 @@ public class MD5UtilTest {
 
     @Test
     public void testGetMDStr() throws NoSuchAlgorithmException {
-        String password = "admin";
+        String password = "admin11";
         String md5Str = md5Util.getMD5Str(password);
         System.out.println(md5Str);
     }
