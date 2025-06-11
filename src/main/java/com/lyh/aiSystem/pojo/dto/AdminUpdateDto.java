@@ -2,7 +2,7 @@ package com.lyh.aiSystem.pojo.dto;
 
 import lombok.Data;
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 /**
  * @author BigHH

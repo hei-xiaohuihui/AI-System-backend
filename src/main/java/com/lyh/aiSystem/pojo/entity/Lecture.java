@@ -1,7 +1,10 @@
 package com.lyh.aiSystem.pojo.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +13,9 @@ import java.time.LocalDateTime;
  *  讲座实体类
  */
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @TableName("cs_lecture")
 public class Lecture {
 
@@ -46,4 +52,6 @@ public class Lecture {
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
+
+    private Integer capacity;
 }

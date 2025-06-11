@@ -1,32 +1,28 @@
 package com.lyh.aiSystem.pojo.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
-
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
 import java.time.LocalDateTime;
 
 /**
  * @author BigHH
- *  讲师创建讲座数据传输对象
+ *  讲师更新讲座信息数据传输对象
  */
 @Data
-public class LectureCreateDto {
+public class LectureUpdateDto {
 
     @NotBlank
+    private Long id;
+
     private String title;
 
-    @NotBlank
     private String description;
 
-    @NotNull
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lectureTime;
 
-    @NotBlank
     private String location;
-
 
     private String tags;
 

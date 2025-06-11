@@ -34,6 +34,7 @@ public enum ExceptionEnum {
      */
     DB_INSERT_ERROR(20001, "DB插入失败"),
     DB_UPDATE_ERROR(20002, "DB更新失败"),
+    DB_DELETE_ERROR(20003, "DB删除失败"),
 
     /**
      *  聊天相关异常
@@ -41,6 +42,16 @@ public enum ExceptionEnum {
     CHAT_SESSION_NOT_EXIST(30001, "会话不存在"),
     CHAT_ROLE_UNKNOWN(30002, "未知聊天角色"),
     CHAT_HISTORY_NOT_BELONG_TO_CURRENT_USER(30003, "非当前用户会话记录"),
+
+    /**
+     *  讲座相关异常
+     */
+    LECTURE_NOT_EXIST(40001, "讲座不存在"),
+    LECTURE_NOT_BELONG_TO_CURRENT_ADMIN(40002, "非当前讲师讲座"),
+    LECTURE_STATUS_INVALID(40003, "讲座状态无效"),
+    LECTURE_ALREADY_FULL(40004, "讲座已选满"),
+    LECTURE_USER_ALREADY_ENROLLED(40005, "用户已报名"),
+    LECTURE_USER_NOT_ENROLLED(40006, "用户未报名"),
 
     /**
      *  系统异常：用于在通用系统错误时抛出
