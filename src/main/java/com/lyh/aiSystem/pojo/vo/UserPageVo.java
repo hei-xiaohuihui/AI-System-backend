@@ -15,6 +15,10 @@ public class UserPageVo {
 
     private String username;
 
+    private String realName;
+
+    private String studentId;
+
     private String email;
 
     private String phone;

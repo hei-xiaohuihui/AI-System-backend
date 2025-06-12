@@ -6,10 +6,7 @@ import com.lyh.aiSystem.pojo.dto.AdminUpdateDto;
 import com.lyh.aiSystem.service.AdminService;
 import com.lyh.aiSystem.utils.Result;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
@@ -31,6 +28,15 @@ public class AdminController {
     @PostMapping("/login")
     public Result adminLogin(@RequestBody @Valid AdminLoginDto adminLoginDto) {
         return Result.success(adminService.adminLogin(adminLoginDto));
+    }
+
+    /**
+     *  获取管理员账户详情信息
+     * @return
+     */
+    @GetMapping("/detail")
+    public Result getAdminDetail() {
+        return Result.success(adminService.getAdminDetail());
     }
 
     /**

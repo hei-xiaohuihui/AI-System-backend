@@ -27,6 +27,10 @@ public class User {
 
     private String password;
 
+    private String realName;
+
+    private String studentId;
+
     private String email;
 
     private String phone;

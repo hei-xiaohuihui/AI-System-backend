@@ -13,6 +13,7 @@ import com.lyh.aiSystem.pojo.dto.*;
 import com.lyh.aiSystem.pojo.entity.Admin;
 import com.lyh.aiSystem.pojo.entity.User;
 import com.lyh.aiSystem.pojo.vo.AdminPageVo;
+import com.lyh.aiSystem.pojo.vo.AdminVo;
 import com.lyh.aiSystem.pojo.vo.UserPageVo;
 import com.lyh.aiSystem.properties.JwtProperties;
 import com.lyh.aiSystem.service.AdminService;
@@ -29,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -111,7 +113,9 @@ public class AdminServiceImpl implements AdminService {
 
         Admin admin = new Admin();
         BeanUtils.copyProperties(adminUpdateDto, admin);
-        admin.setId(adminContextUtil.getAdminId());
+        if(adminUpdateDto.getId() == null) {
+            admin.setId(adminContextUtil.getAdminId());
+        }
         // 更新数据库
         int updateResult = adminMapper.updateById(admin);
         if(updateResult == 0) {
@@ -165,6 +169,12 @@ public class AdminServiceImpl implements AdminService {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if(StringUtils.hasText(userPageDto.getUsername())) {
             queryWrapper.like("username", userPageDto.getUsername());
+        }
+        if(StringUtils.hasText(userPageDto.getRealName())) {
+            queryWrapper.like("real_name", userPageDto.getRealName());
+        }
+        if(StringUtils.hasText(userPageDto.getStudentId())) {
+            queryWrapper.like("student_id", userPageDto.getStudentId());
         }
         if(StringUtils.hasText(userPageDto.getEmail())) {
             queryWrapper.like("email", userPageDto.getEmail());
@@ -265,6 +275,52 @@ public class AdminServiceImpl implements AdminService {
     }
 
     /**
+     *  超级管理员更新其他管理员（讲师）信息
+     * @param adminUpdateDto
+     */
+    @Override
+    public void updateOtherAdminInfo(AdminUpdateDto adminUpdateDto) {
+        if(StringUtils.hasText(adminUpdateDto.getUsername())) {
+            // 判断要修改的用户名是否已存在
+            Admin admin = adminMapper.selectOne(new QueryWrapper<Admin>().eq("id", adminUpdateDto.getId()));
+            if(admin != null && !Objects.equals(admin.getUsername(), adminUpdateDto.getUsername())) { // 要修改的用户名为非当前用户的用户名且已存在
+                throw new BaseException(ExceptionEnum.ADMIN_ALREADY_EXIST);
+            }
+        }
+
+        if(adminUpdateDto.getId() != null) {
+            // 根据id查询admin是否存在
+            if(adminMapper.selectOne(new QueryWrapper<Admin>().eq("id", adminUpdateDto.getId())) ==  null) {
+                throw new BaseException(ExceptionEnum.ADMIN_NOT_EXIST);
+            }
+        }
+
+        this.updateAdminInfo(adminUpdateDto);
+    }
+
+    /**
+     *  获取管理员账户详细信息
+     * @return
+     */
+    @Override
+    public AdminVo getAdminDetail() {
+        Admin admin = adminMapper.selectOne(new QueryWrapper<Admin>().eq("id", adminContextUtil.getAdminId()));
+        if(admin == null) {
+            throw new BaseException(ExceptionEnum.ADMIN_NOT_EXIST);
+        }
+
+        AdminVo adminVo = new AdminVo();
+        if(admin.getRole().equals(AdminRoleConstant.ADMIN_ROLE_LECTURER)) { // 讲师直接复制属性
+            BeanUtils.copyProperties(admin, adminVo);
+        } else { // 超级管理员只设置部分属性
+            adminVo.setUsername(admin.getUsername());
+            adminVo.setEmail(admin.getEmail());
+            adminVo.setPhone(admin.getPhone());
+        }
+        return adminVo;
+    }
+
+    /**
      *  超级管理员更新学生账户状态
      * @param userId
      * @param status
@@ -291,6 +347,8 @@ public class AdminServiceImpl implements AdminService {
      */
     private boolean isDtoEffective(AdminUpdateDto adminUpdateDto) {
         return StringUtils.hasText(adminUpdateDto.getPassword()) ||
+                StringUtils.hasText(adminUpdateDto.getLecturerName()) ||
+                StringUtils.hasText(adminUpdateDto.getLecturerTitle()) ||
                 StringUtils.hasText(adminUpdateDto.getEmail()) ||
                 StringUtils.hasText(adminUpdateDto.getPhone()) ||
                 adminUpdateDto.getGender() != null;

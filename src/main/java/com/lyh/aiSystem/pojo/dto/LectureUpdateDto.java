@@ -2,7 +2,10 @@ package com.lyh.aiSystem.pojo.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.time.LocalDateTime;
 
 /**
@@ -12,14 +15,14 @@ import java.time.LocalDateTime;
 @Data
 public class LectureUpdateDto {
 
-    @NotBlank
+    @NotNull
     private Long id;
 
     private String title;
 
     private String description;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime lectureTime;
 
     private String location;

@@ -13,8 +13,12 @@ public class UserPageDto {
 
     private int pageSize = 10;
 
-    // 支持对username、email、phone进行模糊查询
+    // 支持对username、realName、studentId、email、phone进行模糊查询
     private String username;
+
+    private String realName;
+
+    private String studentId;
 
     private String email;
 

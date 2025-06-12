@@ -156,6 +156,8 @@ public class UserServiceImpl implements UserService {
                StringUtils.hasText(dto.getEmail()) ||
                StringUtils.hasText(dto.getPhone()) ||
 //               StringUtils.hasText(dto.getAvatarUrl()) ||
+               StringUtils.hasText(dto.getRealName()) ||
+               StringUtils.hasText(dto.getStudentId()) ||
                dto.getGender() != null;
     }
 }

@@ -111,7 +111,8 @@ public class LectureServiceImpl implements LectureService {
         setCommonQueryWrapper(queryWrapper, dto.getTitle(), null, null, dto.getLocation(), dto.getTags(), dto.getStatus(), dto.getStartTime(), dto.getEndTime());
         // 设置及其他查询条件
         queryWrapper.eq("creator_id", adminContextUtil.getAdminId());
-        queryWrapper.orderByAsc("lecture_time"); // 根据讲座开始时间升序排列
+//        queryWrapper.orderByAsc("lecture_time"); // 根据讲座开始时间升序排列
+        queryWrapper.orderByDesc("created_at"); // 根据创建时间降序排列
         IPage<Lecture> lectures = lectureMapper.selectPage(page, queryWrapper);
         // 封装为LecturePageVoForLecturer对象
         List<LecturePageVoForLecturer> voList = lectures.getRecords().stream().map(lecture -> {
@@ -249,10 +250,10 @@ public class LectureServiceImpl implements LectureService {
             queryWrapper.like("title", title);
         }
         if(StringUtils.hasText(speakerName)) {
-            queryWrapper.like("speakerName", title);
+            queryWrapper.like("speaker_name", speakerName);
         }
         if(StringUtils.hasText(speakerTitle)) {
-            queryWrapper.like("speakerTitle", title);
+            queryWrapper.eq("speaker_title", speakerTitle);
         }
         if(StringUtils.hasText(location)) {
             queryWrapper.like("location", location);

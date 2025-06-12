@@ -27,7 +27,7 @@ public enum ExceptionEnum {
     ADMIN_NOT_EXIST(12001, "管理员不存在"),
     ADMIN_USERNAME_OR_PASSWORD_ERROR(12002, "用户名或密码错误"),
     ADMIN_NOT_SUPPER_ADMIN(12003, "非超级管理员用户"),
-    ADMIN_ALREADY_EXIST(12004, "管理员已存在"),
+    ADMIN_ALREADY_EXIST(12004, "管理员/用户名已存在"),
 
     /**
      *  数据库相关异常

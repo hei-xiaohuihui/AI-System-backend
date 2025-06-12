@@ -3,6 +3,7 @@ package com.lyh.aiSystem.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lyh.aiSystem.pojo.dto.*;
 import com.lyh.aiSystem.pojo.vo.AdminPageVo;
+import com.lyh.aiSystem.pojo.vo.AdminVo;
 import com.lyh.aiSystem.pojo.vo.UserPageVo;
 
 public interface AdminService {
@@ -20,4 +21,8 @@ public interface AdminService {
     IPage<AdminPageVo> adminPage(AdminPageDto adminPageDto);
 
     void updateAdminStatus(Long adminId, Byte status);
+
+    void updateOtherAdminInfo(AdminUpdateDto adminUpdateDto);
+
+    AdminVo getAdminDetail();
 }

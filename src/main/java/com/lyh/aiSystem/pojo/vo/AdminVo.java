@@ -4,22 +4,22 @@ import lombok.Data;
 
 /**
  * @author BigHH
- *  用户详情视图对象
+ *  管理员账户详情信息视图对象
  */
 @Data
-public class UserDetailVo {
+public class AdminVo {
 
     private String username;
 
-    private String realName;
+    private String lecturerName;
 
-    private String studentId;
+    private String lecturerTitle;
 
     private String email;
 
     private String phone;
 
-//    private String avatarUrl;
-
     private Byte gender;
+
+    private String bio;
 }

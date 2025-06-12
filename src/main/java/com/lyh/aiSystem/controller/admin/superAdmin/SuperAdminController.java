@@ -2,6 +2,7 @@ package com.lyh.aiSystem.controller.admin.superAdmin;
 
 import com.lyh.aiSystem.pojo.dto.AdminCreateDto;
 import com.lyh.aiSystem.pojo.dto.AdminPageDto;
+import com.lyh.aiSystem.pojo.dto.AdminUpdateDto;
 import com.lyh.aiSystem.pojo.dto.UserPageDto;
 import com.lyh.aiSystem.service.AdminService;
 import com.lyh.aiSystem.utils.Result;
@@ -29,6 +30,17 @@ public class SuperAdminController {
     @PostMapping("/createAdmin")
     public Result createAdmin(@RequestBody @Valid AdminCreateDto adminCreateDto) {
         adminService.createAdmin(adminCreateDto);
+        return Result.success();
+    }
+
+    /**
+     *  超级管理员更新普通管理员（讲师）信息接口
+     * @param adminUpdateDto
+     * @return
+     */
+    @PostMapping("/updateAdminInfo")
+    public Result updateAdminInfo(@RequestBody @Valid AdminUpdateDto adminUpdateDto) {
+        adminService.updateOtherAdminInfo(adminUpdateDto);
         return Result.success();
     }
 

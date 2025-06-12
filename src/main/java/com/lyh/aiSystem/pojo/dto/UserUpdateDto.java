@@ -14,13 +14,14 @@ public class UserUpdateDto {
     @Size(min = 6, max = 20, message = "密码长度必须在6到20之间")
     private String password;
 
+    private String realName;
+
+    private String studentId;
+
     private String email;
 
     private String phone;
 
-//    private String avatarUrl;
-
     private Byte gender;
 
-//    private Byte status;
 }
