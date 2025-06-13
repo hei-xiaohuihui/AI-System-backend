@@ -55,9 +55,16 @@ public enum ExceptionEnum {
     LECTURE_STATUS_APPROVED_CANNOT_DELETE(40007, "已通过审核的讲座不能删除"),
 
     /**
+     *  文件上传相关异常
+     */
+    FILE_TYPE_NOT_SUPPORT(50001, "不支持的文件类型"),
+    FILE_UPLOAD_FAILED(50002, "文件上传失败"),
+
+    /**
      *  系统异常：用于在通用系统错误时抛出
      */
-    SYSTEM_ERROR(90001, "系统异常");
+    SYSTEM_ERROR(90001, "系统异常"),
+    SYSTEM_DIR_CREATE_ERROR(90002, "系统创建目录失败");
 
     // 异常码
     private Integer code;

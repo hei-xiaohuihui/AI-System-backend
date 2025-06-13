@@ -15,7 +15,9 @@ import com.lyh.aiSystem.pojo.entity.User;
 import com.lyh.aiSystem.pojo.vo.AdminPageVo;
 import com.lyh.aiSystem.pojo.vo.AdminVo;
 import com.lyh.aiSystem.pojo.vo.UserPageVo;
+import com.lyh.aiSystem.properties.FileUploadProperties;
 import com.lyh.aiSystem.properties.JwtProperties;
+import com.lyh.aiSystem.repository.FileRepository;
 import com.lyh.aiSystem.service.AdminService;
 import com.lyh.aiSystem.utils.AdminContextUtil;
 import com.lyh.aiSystem.utils.JwtUtil;
@@ -25,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -53,6 +56,10 @@ public class AdminServiceImpl implements AdminService {
     private final AdminContextUtil adminContextUtil;
 
     private final UserMapper  userMapper;
+
+    private final FileRepository fileRepository;
+
+    private final FileUploadProperties  fileUploadProperties;
 
     /**
      *  管理员登录
@@ -318,6 +325,39 @@ public class AdminServiceImpl implements AdminService {
             adminVo.setPhone(admin.getPhone());
         }
         return adminVo;
+    }
+
+    /**
+     *  文件上传
+     * @param file
+     * @return
+     */
+    @Override
+    public String uploadFile(MultipartFile file) {
+        // todo 暂时仅支持pdf文件上传
+        if(!file.getContentType().equals("application/pdf")) {
+            throw new BaseException(ExceptionEnum.FILE_TYPE_NOT_SUPPORT);
+        }
+
+        String basePath = fileUploadProperties.getBasePath();
+        if(file.getContentType().equals("application/pdf")) { // pdf文件
+            // 判断上传文件的用户是SuperAdmin还是Lecturer
+            if(adminContextUtil.getAdminRole().equals(AdminRoleConstant.ADMIN_ROLE_SUPER_ADMIN)) { // 超级管理员上传pdf文件
+                return fileRepository.save(file, basePath, fileUploadProperties.getPdf().getKnowledgePath());
+            } else{
+                return fileRepository.save(file, basePath, fileUploadProperties.getPdf().getLecturePath()); // 讲师上传pdf文件
+            }
+        } else if(file.getContentType().equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document") ||
+            file.getContentType().equals("application/msword")) { // word文件
+            // 判断上传文件的用户是SuperAdmin还是Lecturer
+            if(adminContextUtil.getAdminRole().equals(AdminRoleConstant.ADMIN_ROLE_SUPER_ADMIN)) { // 超级管理员上传word文件
+                return fileRepository.save(file, basePath, fileUploadProperties.getWord().getKnowledgePath());
+            } else{
+                return fileRepository.save(file, basePath, fileUploadProperties.getWord().getLecturePath()); // 讲师上传word文件
+            }
+        }
+        // 其他文件类型抛出文件类型不支持异常
+        throw new BaseException(ExceptionEnum.FILE_TYPE_NOT_SUPPORT);
     }
 
     /**

@@ -2,10 +2,12 @@ package com.lyh.aiSystem.config;
 
 import com.lyh.aiSystem.interceptor.AdminJwtInterceptor;
 import com.lyh.aiSystem.interceptor.UserJwtInterceptor;
+import com.lyh.aiSystem.properties.FileUploadProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
@@ -19,6 +21,8 @@ public class WebMVC implements WebMvcConfigurer {
     private final UserJwtInterceptor userJwtInterceptor;
 
     private final AdminJwtInterceptor adminJwtInterceptor;
+
+    private final FileUploadProperties fileUploadProperties;
 
     /**
      *  跨域配置
@@ -50,5 +54,15 @@ public class WebMVC implements WebMvcConfigurer {
         registry.addInterceptor(adminJwtInterceptor)
                 .addPathPatterns("/admin/**")
                 .excludePathPatterns("/admin/auth/login");
+    }
+
+    /**
+     *  静态资源映射配置
+     * @param registry
+     */
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/uploads/**")
+                .addResourceLocations("file:" + fileUploadProperties.getBasePath() + "/uploads/"); // file表示从本地文件系统映射
     }
 }

@@ -1,6 +1,5 @@
 package com.lyh.aiSystem.controller;
 
-import com.lyh.aiSystem.pojo.dto.AdminCreateDto;
 import com.lyh.aiSystem.pojo.dto.AdminLoginDto;
 import com.lyh.aiSystem.pojo.dto.AdminUpdateDto;
 import com.lyh.aiSystem.service.AdminService;
@@ -9,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author BigHH
@@ -48,5 +48,15 @@ public class AdminController {
     public Result updateAdminInfo(@RequestBody @Valid AdminUpdateDto adminUpdateDto) {
         adminService.updateAdminInfo(adminUpdateDto);
         return Result.success();
+    }
+
+    /**
+     *  文件上传
+     * @param file
+     * @return
+     */
+    @PostMapping("/uploadFile")
+    public Result uploadFile(@RequestParam("file") MultipartFile file) {
+        return Result.success(adminService.uploadFile(file));
     }
 }

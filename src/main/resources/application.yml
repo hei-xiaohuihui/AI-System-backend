@@ -66,6 +66,15 @@ lyh:
   redis:
     cache-expire-time: 36000000 # Redis缓存过期时间（单位毫秒）
     max-cache-size: 1000 # Redis最大缓存条目数（用于LFU缓存失效策略）
+  # 文件上传相关配置
+  uploads:
+    base-path: D:/Intellij Idea Project/AI-System # 文件上传基础路径
+    pdf:
+      knowledge-path: /uploads/pdf/Knowledge/ # 超级管理员上传的PDF文件保存
+      lecture-path: /uploads/pdf/Lecture/ # 讲师上传的讲座对应PDF文件保存路径
+    word:
+      knowledge-path: /uploads/word/Knowledge/ # 超级管理员上传的Word文件保存
+      lecture-path: /uploads/word/Lecture/ # 讲师上传的讲座对应Word文件保存路径
 
 server:
   port: 7816

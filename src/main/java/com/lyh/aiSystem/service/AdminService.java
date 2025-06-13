@@ -5,6 +5,7 @@ import com.lyh.aiSystem.pojo.dto.*;
 import com.lyh.aiSystem.pojo.vo.AdminPageVo;
 import com.lyh.aiSystem.pojo.vo.AdminVo;
 import com.lyh.aiSystem.pojo.vo.UserPageVo;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface AdminService {
 
@@ -25,4 +26,6 @@ public interface AdminService {
     void updateOtherAdminInfo(AdminUpdateDto adminUpdateDto);
 
     AdminVo getAdminDetail();
+
+    String uploadFile(MultipartFile file);
 }
