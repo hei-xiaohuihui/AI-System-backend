@@ -52,6 +52,7 @@ public enum ExceptionEnum {
     LECTURE_ALREADY_FULL(40004, "讲座已选满"),
     LECTURE_USER_ALREADY_ENROLLED(40005, "用户已报名"),
     LECTURE_USER_NOT_ENROLLED(40006, "用户未报名"),
+    LECTURE_STATUS_APPROVED_CANNOT_DELETE(40007, "已通过审核的讲座不能删除"),
 
     /**
      *  系统异常：用于在通用系统错误时抛出

@@ -21,4 +21,6 @@ public interface LectureService {
     IPage<LecturePageVoForSuperAdmin> lecturePageForSuperAdmin(LecturePageDtoForSuperAdmin dto);
 
     IPage<LecturePageVoForUser> lecturePageForUser(LecturePageDtoForUser dto);
+
+    void recreateLecture(LectureRecreateDto dto);
 }

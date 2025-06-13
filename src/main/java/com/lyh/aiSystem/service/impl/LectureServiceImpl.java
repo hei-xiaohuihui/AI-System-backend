@@ -139,11 +139,14 @@ public class LectureServiceImpl implements LectureService {
     public void deleteLectureById(Long id) {
         // 先判断讲座是否存在、是否是当前讲师创建的讲座
         Lecture lecture = lectureMapper.selectById(id);
-        if(lecture == null) {
+        if(lecture == null) { // 讲座不存在
             throw new BaseException(ExceptionEnum.LECTURE_NOT_EXIST);
         }
-        if(!lecture.getCreatorId().equals(adminContextUtil.getAdminId())) {
+        if(!lecture.getCreatorId().equals(adminContextUtil.getAdminId())) { // 讲座不属于当前讲师
             throw new BaseException(ExceptionEnum.LECTURE_NOT_BELONG_TO_CURRENT_ADMIN);
+        }
+        if(lecture.getStatus().equals(LectureStatusConstant.LECTURE_STATUS_APPROVED)) { // 讲座已通过审核，不能删除
+            throw new BaseException(ExceptionEnum.LECTURE_STATUS_APPROVED_CANNOT_DELETE);
         }
 
         int deleteResult = lectureMapper.deleteById(id);
@@ -240,6 +243,33 @@ public class LectureServiceImpl implements LectureService {
         pageVo.setTotal(lectures.getTotal());
         pageVo.setRecords(voList);
         return pageVo;
+    }
+
+    /**
+     *  讲师重新创建讲座（将被拒绝的讲座修改后再次提交审核）
+     * @param dto
+     */
+    @Override
+    public void recreateLecture(LectureRecreateDto dto) {
+        // 根据id查询被拒讲座信息
+        Lecture lecture = lectureMapper.selectById(dto.getId());
+        if(lecture == null) { // 讲座不存在
+            throw new BaseException(ExceptionEnum.LECTURE_NOT_EXIST);
+        }
+        if(!lecture.getCreatorId().equals(adminContextUtil.getAdminId())) { // 讲座不属于当前讲师
+            throw new BaseException(ExceptionEnum.LECTURE_NOT_BELONG_TO_CURRENT_ADMIN);
+        }
+        if(!lecture.getStatus().equals(LectureStatusConstant.LECTURE_STATUS_REJECTED)) { // 只有被拒的讲座才能被修改后重新提交
+            throw new BaseException(ExceptionEnum.LECTURE_STATUS_INVALID);
+        }
+        // 属性拷贝
+        BeanUtils.copyProperties(dto, lecture);
+        // 将讲座状态改为待审核
+        lecture.setStatus(LectureStatusConstant.LECTURE_STATUS_PENDING);
+        int updateResult = lectureMapper.updateById(lecture);
+        if(updateResult == 0) {
+            throw new BaseException(ExceptionEnum.DB_UPDATE_ERROR);
+        }
     }
 
     /**

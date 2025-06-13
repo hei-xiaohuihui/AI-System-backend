@@ -2,6 +2,7 @@ package com.lyh.aiSystem.controller.admin.lecturer;
 
 import com.lyh.aiSystem.pojo.dto.LectureCreateDto;
 import com.lyh.aiSystem.pojo.dto.LecturePageDtoForLecturer;
+import com.lyh.aiSystem.pojo.dto.LectureRecreateDto;
 import com.lyh.aiSystem.pojo.dto.LectureUpdateDto;
 import com.lyh.aiSystem.service.LectureService;
 import com.lyh.aiSystem.utils.Result;
@@ -61,6 +62,17 @@ public class LectureController {
     @DeleteMapping("/delete")
     public Result deleteLecture(@RequestParam("id") Long id) {
         lectureService.deleteLectureById(id);
+        return Result.success();
+    }
+
+    /**
+     *  审核被拒绝的讲座可以修改后重新提交审核
+     * @param dto
+     * @return
+     */
+    @PostMapping("/recreate")
+    public Result recreateLecture(@RequestBody @Valid LectureRecreateDto dto) {
+        lectureService.recreateLecture(dto);
         return Result.success();
     }
 }
