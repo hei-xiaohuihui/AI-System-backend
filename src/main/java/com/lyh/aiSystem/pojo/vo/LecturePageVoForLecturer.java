@@ -30,7 +30,7 @@ public class LecturePageVoForLecturer {
 
     private String resourceUrl;
 
-    private String ragDocId;
+//    private String ragDocId;
 
     private String status;
 

@@ -57,7 +57,7 @@ public class WebMVC implements WebMvcConfigurer {
     }
 
     /**
-     *  静态资源映射配置
+     *  静态资源映射
      * @param registry
      */
     @Override

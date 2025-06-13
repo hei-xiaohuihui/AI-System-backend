@@ -2,6 +2,7 @@ package com.lyh.aiSystem.repository.impl;
 
 import com.lyh.aiSystem.enumeration.ExceptionEnum;
 import com.lyh.aiSystem.exception.BaseException;
+import com.lyh.aiSystem.properties.FileUploadProperties;
 import com.lyh.aiSystem.repository.FileRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 /**
@@ -22,6 +28,8 @@ import java.util.UUID;
 public class LocalFileRepository implements FileRepository {
 
     private final HttpServletRequest request;
+
+    private final FileUploadProperties  fileUploadProperties;
 
     /**
      *
@@ -59,5 +67,24 @@ public class LocalFileRepository implements FileRepository {
                 .toString();
 
         return url;
+    }
+
+    /**
+     *  删除保存的文件
+     * @param resourceUrl
+     */
+    @Override
+    public void delete(String resourceUrl) {
+        try {
+            // 提取URL中的相对路径部分
+            URI uri = new URI(resourceUrl);
+            String resourcePath = uri.getPath();
+            // 获取保存文件的完整路径
+            Path fullPath = Paths.get(fileUploadProperties.getBasePath(), resourcePath); // 拼接保存文件的完整路径
+            // 删除文件
+            Files.deleteIfExists(fullPath);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -14,7 +14,7 @@ public interface LectureService {
 
     IPage<LecturePageVoForLecturer> lecturePageForLecturer(LecturePageDtoForLecturer dto);
 
-    void deleteLectureById(Long id);
+    void deleteLectureById(Long id, String resourceUrl);
 
     void checkLecture(Long id, String status);
 

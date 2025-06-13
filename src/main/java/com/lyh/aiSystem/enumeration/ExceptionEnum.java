@@ -61,6 +61,11 @@ public enum ExceptionEnum {
     FILE_UPLOAD_FAILED(50002, "文件上传失败"),
 
     /**
+     *  知识库相关异常
+     */
+    KNOWLEDGE_DOC_NOT_EXIST(60001, "知识库文档不存在"),
+
+    /**
      *  系统异常：用于在通用系统错误时抛出
      */
     SYSTEM_ERROR(90001, "系统异常"),

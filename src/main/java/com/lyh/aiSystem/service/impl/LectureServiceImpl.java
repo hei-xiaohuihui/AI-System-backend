@@ -15,10 +15,10 @@ import com.lyh.aiSystem.pojo.entity.Lecture;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForLecturer;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForSuperAdmin;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForUser;
+import com.lyh.aiSystem.repository.FileRepository;
 import com.lyh.aiSystem.service.LectureEnrollService;
 import com.lyh.aiSystem.service.LectureService;
 import com.lyh.aiSystem.utils.AdminContextUtil;
-import io.netty.util.internal.StringUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -44,6 +44,8 @@ public class LectureServiceImpl implements LectureService {
     private final AdminMapper adminMapper;
 
     private final LectureEnrollService  lectureEnrollService;
+
+    private final FileRepository fileRepository;
 
     /**
      *  讲师创建讲座
@@ -90,6 +92,10 @@ public class LectureServiceImpl implements LectureService {
         if(lecture == null) {
             throw new BaseException(ExceptionEnum.LECTURE_NOT_EXIST);
         }
+        // todo 如果要更新文档
+        // todo 删除本地保存的旧文档
+        // todo 删除向量数据库中的文档数据
+
         // 拷贝属性，并更新
         BeanUtils.copyProperties(dto, lecture);
         int updateResult = lectureMapper.updateById(lecture);
@@ -132,11 +138,13 @@ public class LectureServiceImpl implements LectureService {
     }
 
     /**
-     *  讲师根据id删除讲座
+     * 讲师根据id删除讲座
+     *
      * @param id
+     * @param resourceUrl
      */
     @Override
-    public void deleteLectureById(Long id) {
+    public void deleteLectureById(Long id, String resourceUrl) {
         // 先判断讲座是否存在、是否是当前讲师创建的讲座
         Lecture lecture = lectureMapper.selectById(id);
         if(lecture == null) { // 讲座不存在
@@ -148,6 +156,10 @@ public class LectureServiceImpl implements LectureService {
         if(lecture.getStatus().equals(LectureStatusConstant.LECTURE_STATUS_APPROVED)) { // 讲座已通过审核，不能删除
             throw new BaseException(ExceptionEnum.LECTURE_STATUS_APPROVED_CANNOT_DELETE);
         }
+        // 删除本地保存的讲座对应的文档
+        fileRepository.delete(resourceUrl);
+
+        // todo 删除向量数据库中的数据
 
         int deleteResult = lectureMapper.deleteById(id);
         if(deleteResult == 0) {
@@ -262,6 +274,10 @@ public class LectureServiceImpl implements LectureService {
         if(!lecture.getStatus().equals(LectureStatusConstant.LECTURE_STATUS_REJECTED)) { // 只有被拒的讲座才能被修改后重新提交
             throw new BaseException(ExceptionEnum.LECTURE_STATUS_INVALID);
         }
+        // todo 如果修改了讲座的资源文件
+        // todo 删除本地保存的资源文件
+        // todo 删除向量数据库中的数据
+
         // 属性拷贝
         BeanUtils.copyProperties(dto, lecture);
         // 将讲座状态改为待审核
@@ -318,7 +334,6 @@ public class LectureServiceImpl implements LectureService {
                 StringUtils.hasText(dto.getLocation()) ||
                 StringUtils.hasText(dto.getTags()) ||
                 StringUtils.hasText(dto.getResourceUrl()) ||
-                StringUtils.hasText(dto.getRagDocId()) ||
                 dto.getCapacity() != null ||
                 dto.getLectureTime() != null;
     }

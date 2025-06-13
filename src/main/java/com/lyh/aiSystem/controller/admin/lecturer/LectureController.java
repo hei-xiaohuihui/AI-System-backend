@@ -60,8 +60,8 @@ public class LectureController {
      * @return
      */
     @DeleteMapping("/delete")
-    public Result deleteLecture(@RequestParam("id") Long id) {
-        lectureService.deleteLectureById(id);
+    public Result deleteLecture(@RequestParam("id") Long id, @RequestParam("resourceUrl") String resourceUrl) {
+        lectureService.deleteLectureById(id, resourceUrl);
         return Result.success();
     }
 

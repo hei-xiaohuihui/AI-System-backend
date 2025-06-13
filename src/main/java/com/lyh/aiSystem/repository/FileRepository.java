@@ -12,4 +12,10 @@ public interface FileRepository {
      * @return
      */
     String save(MultipartFile file, String basePath, String path);
+
+    /**
+     *  删除保存的文件
+     * @param resourceUrl
+     */
+    void delete(String resourceUrl);
 }
