@@ -104,9 +104,18 @@
         </dependency>
 
         <!-- 向量数据库依赖 -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.ai</groupId>-->
+<!--            <artifactId>spring-ai-vector-store</artifactId>-->
+<!--        </dependency>-->
+        <!-- 向量数据库Milvus依赖 -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.ai</groupId>-->
+<!--            <artifactId>spring-ai-starter-vector-store-milvus</artifactId>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-vector-store</artifactId>
+            <artifactId>spring-ai-milvus-store</artifactId>
         </dependency>
     </dependencies>
 
