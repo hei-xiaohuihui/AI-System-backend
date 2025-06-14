@@ -31,10 +31,10 @@ public class LectureCreateDto {
 
     private String tags;
 
-    @NotBlank
-    private String resourceUrl;
-
-    private String ragDocId;
+//    @NotBlank
+//    private String resourceUrl;
+//
+//    private String ragDocId;
 
     private Integer capacity;
 }

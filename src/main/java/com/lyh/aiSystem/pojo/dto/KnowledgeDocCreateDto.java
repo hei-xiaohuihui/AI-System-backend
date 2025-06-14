@@ -16,7 +16,4 @@ public class KnowledgeDocCreateDto {
     @NotBlank
     private String description;
 
-    @NotBlank
-    private String resourceUrl;
-
 }

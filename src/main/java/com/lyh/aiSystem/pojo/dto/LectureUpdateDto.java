@@ -29,9 +29,9 @@ public class LectureUpdateDto {
 
     private String tags;
 
-    private String resourceUrl;
-
-//    private String ragDocId;
+//    private String resourceUrl;
+//
+////    private String ragDocId;
 
     private Integer capacity;
 }

@@ -39,7 +39,7 @@ public class MilvusVectorStoreConfig {
     @Bean
     public VectorStore vectorStore(MilvusServiceClient milvusClient, @Qualifier("openAiEmbeddingModel") EmbeddingModel embeddingModel) {
         return MilvusVectorStore.builder(milvusClient, embeddingModel)
-                .collectionName("cs_doc")
+                .collectionName("cs_rag_doc")
                 .databaseName("default")
                 .indexType(IndexType.IVF_FLAT)
                 .metricType(MetricType.COSINE)

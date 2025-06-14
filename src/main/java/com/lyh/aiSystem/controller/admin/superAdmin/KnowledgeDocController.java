@@ -8,6 +8,7 @@ import com.lyh.aiSystem.utils.Result;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author BigHH
@@ -22,11 +23,12 @@ public class KnowledgeDocController {
     /**
      *  超级管理员上传/创建知识文档接口
      * @param dto
+     * @param file
      * @return
      */
     @PostMapping("/create")
-    public Result createKnowledgeDoc(@RequestBody @Valid KnowledgeDocCreateDto dto) {
-        knowledgeDocService.createKnowledgeDoc(dto);
+    public Result createKnowledgeDoc(@RequestPart @Valid KnowledgeDocCreateDto dto, @RequestPart("file") MultipartFile file) {
+        knowledgeDocService.createKnowledgeDoc(dto, file);
         return Result.success();
     }
 

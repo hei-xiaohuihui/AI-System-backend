@@ -1,5 +1,6 @@
 package com.lyh.aiSystem.repository;
 
+import com.lyh.aiSystem.pojo.vo.FileSaveVo;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface FileRepository {
@@ -11,11 +12,11 @@ public interface FileRepository {
      * @param path 文件保存路径
      * @return
      */
-    String save(MultipartFile file, String basePath, String path);
+    FileSaveVo save(MultipartFile file, String basePath, String path);
 
     /**
-     *  删除保存的文件
-     * @param resourceUrl
+     *  删除保存的本地文件
+     * @param resourcePath 如：/uploads/pdf/Lecture/f60f2120-ebf8-4964-b676-d5de04426b45.pdf
      */
-    void delete(String resourceUrl);
+    void delete(String resourcePath);
 }

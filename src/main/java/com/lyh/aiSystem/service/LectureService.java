@@ -5,10 +5,11 @@ import com.lyh.aiSystem.pojo.dto.*;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForLecturer;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForSuperAdmin;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForUser;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface LectureService {
 
-    void createLecture(LectureCreateDto dto);
+    void createLecture(LectureCreateDto dto, MultipartFile file);
 
     void updateLecture(LectureUpdateDto dto);
 

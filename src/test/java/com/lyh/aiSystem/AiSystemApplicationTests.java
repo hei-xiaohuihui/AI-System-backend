@@ -15,9 +15,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 class AiSystemApplicationTests {
@@ -43,7 +45,10 @@ class AiSystemApplicationTests {
                         .withPagesPerDocument(1) // 将每页pdf作为一个Document
                         .build());
         // 2.读取PDF文档，拆分为Document
-        List<Document> documents = pagePdfDocumentReader.read();
+        List<Document> documents = pagePdfDocumentReader.read().stream()
+                .peek(doc -> doc.getMetadata().put("rag_doc_id", "def68395-0e9b-4538-b24b-5dd835486f9b"))
+                .collect(Collectors.toList());
+
         // 3.写入向量数据库
         vectorStore.add(documents);
         // 4.搜索向量数据库
@@ -51,10 +56,10 @@ class AiSystemApplicationTests {
                 .query("论语中教育的目的是什么")
                 .topK(1) // 搜索返回的分数最高的1个结果
                 .similarityThreshold(0.5f) // 搜索相似度阈值
-                .filterExpression("file_name == '教资知识笔记.pdf'")
+//                .filterExpression("file_name == '教资知识笔记.pdf'")
                 .build();
         List<Document> docs = vectorStore.similaritySearch(request);
-        if (docs == null) {
+        if (CollectionUtils.isEmpty(docs)) {
             System.out.println("没有找到结果");
             return;
         }
@@ -63,6 +68,8 @@ class AiSystemApplicationTests {
             System.out.println(doc.getScore());
             System.out.println(doc.getText());
         }
+
+        vectorStore.delete("rag_doc_name == 'def68395-0e9b-4538-b24b-5dd835486f9b'");
     }
 
     /**

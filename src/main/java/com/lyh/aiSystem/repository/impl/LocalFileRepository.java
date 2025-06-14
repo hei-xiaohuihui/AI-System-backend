@@ -2,6 +2,7 @@ package com.lyh.aiSystem.repository.impl;
 
 import com.lyh.aiSystem.enumeration.ExceptionEnum;
 import com.lyh.aiSystem.exception.BaseException;
+import com.lyh.aiSystem.pojo.vo.FileSaveVo;
 import com.lyh.aiSystem.properties.FileUploadProperties;
 import com.lyh.aiSystem.repository.FileRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,14 +33,14 @@ public class LocalFileRepository implements FileRepository {
     private final FileUploadProperties  fileUploadProperties;
 
     /**
-     *
+     *  将上传的文件保存到本地
      * @param file 要上传的文件
      * @param basePath 文件保存基本路径
      * @param path 文件保存路径
-     * @return 访问文件的URL
+     * @return 访问文件的URL 和 生成的新文件名
      */
     @Override
-    public String save(MultipartFile file, String basePath, String path) {
+    public FileSaveVo save(MultipartFile file, String basePath, String path) {
         File dir = new File(basePath + path);
         // 判断保存路径是否存在，不存在则创建
         if(!dir.exists() && !dir.mkdirs()) {
@@ -65,20 +66,18 @@ public class LocalFileRepository implements FileRepository {
                 .replacePath(filePath) // 替换请求路径
                 .build()
                 .toString();
-
-        return url;
+        // 返回url和去掉后缀后的新文件名
+        String ragDocId = newFileName.substring(0, newFileName.lastIndexOf("."));
+        return new FileSaveVo(url, ragDocId);
     }
 
     /**
      *  删除保存的文件
-     * @param resourceUrl
+     * @param resourcePath
      */
     @Override
-    public void delete(String resourceUrl) {
+    public void delete(String resourcePath) {
         try {
-            // 提取URL中的相对路径部分
-            URI uri = new URI(resourceUrl);
-            String resourcePath = uri.getPath();
             // 获取保存文件的完整路径
             Path fullPath = Paths.get(fileUploadProperties.getBasePath(), resourcePath); // 拼接保存文件的完整路径
             // 删除文件

@@ -50,13 +50,13 @@ public class AdminController {
         return Result.success();
     }
 
-    /**
-     *  文件上传
-     * @param file
-     * @return
-     */
-    @PostMapping("/uploadFile")
-    public Result uploadFile(@RequestParam("file") MultipartFile file) {
-        return Result.success(adminService.uploadFile(file));
-    }
+//    /**
+//     *  文件上传
+//     * @param file
+//     * @return
+//     */
+//    @PostMapping("/uploadFile")
+//    public Result uploadFile(@RequestParam("file") MultipartFile file) {
+//        return Result.success(adminService.uploadFile(file));
+//    }
 }

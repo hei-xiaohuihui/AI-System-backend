@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author BigHH
@@ -25,11 +26,12 @@ public class LectureController {
     /**
      *  讲师创建讲座
      * @param dto
+     * @param file
      * @return
      */
     @PostMapping("/create")
-    public Result createLecture(@RequestBody @Valid LectureCreateDto dto) {
-        lectureService.createLecture(dto);
+    public Result createLecture(@RequestPart @Valid LectureCreateDto dto, @RequestPart("file") MultipartFile file) {
+        lectureService.createLecture(dto, file);
         return Result.success();
     }
 

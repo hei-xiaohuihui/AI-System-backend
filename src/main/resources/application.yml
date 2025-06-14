@@ -92,6 +92,8 @@ lyh:
     word:
       knowledge-path: /uploads/word/Knowledge/ # 超级管理员上传的Word文件保存
       lecture-path: /uploads/word/Lecture/ # 讲师上传的讲座对应Word文件保存路径
+  milvus:
+    save-key: rag_doc_id # 向量数据库中的文档的唯一标识（用于检索和删除）
 
 server:
   port: 7816

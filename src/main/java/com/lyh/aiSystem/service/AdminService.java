@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lyh.aiSystem.pojo.dto.*;
 import com.lyh.aiSystem.pojo.vo.AdminPageVo;
 import com.lyh.aiSystem.pojo.vo.AdminVo;
+import com.lyh.aiSystem.pojo.vo.FileSaveVo;
 import com.lyh.aiSystem.pojo.vo.UserPageVo;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,5 +28,5 @@ public interface AdminService {
 
     AdminVo getAdminDetail();
 
-    String uploadFile(MultipartFile file);
+    FileSaveVo uploadFile(MultipartFile file);
 }

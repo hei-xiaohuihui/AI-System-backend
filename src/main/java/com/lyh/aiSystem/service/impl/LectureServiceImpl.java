@@ -12,19 +12,29 @@ import com.lyh.aiSystem.mapper.LectureMapper;
 import com.lyh.aiSystem.pojo.dto.*;
 import com.lyh.aiSystem.pojo.entity.Admin;
 import com.lyh.aiSystem.pojo.entity.Lecture;
+import com.lyh.aiSystem.pojo.vo.FileSaveVo;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForLecturer;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForSuperAdmin;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForUser;
 import com.lyh.aiSystem.repository.FileRepository;
+import com.lyh.aiSystem.service.AdminService;
 import com.lyh.aiSystem.service.LectureEnrollService;
 import com.lyh.aiSystem.service.LectureService;
+import com.lyh.aiSystem.service.MilvusVectorStoreService;
 import com.lyh.aiSystem.utils.AdminContextUtil;
+import com.lyh.aiSystem.utils.UrlUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -47,32 +57,50 @@ public class LectureServiceImpl implements LectureService {
 
     private final FileRepository fileRepository;
 
+    private final AdminService adminService;
+
+    private final MilvusVectorStoreService vectorStoreService;
+
+    private final UrlUtil urlUtil;
+
     /**
-     *  讲师创建讲座
+     * 讲师创建讲座
      * @param dto
+     * @param file
      */
     @Override
-    public void createLecture(LectureCreateDto dto) {
+    public void createLecture(LectureCreateDto dto, MultipartFile file) {
         Lecture lecture = new Lecture();
         // 设置属性
         // 获取当前登录讲师的主键id，根据id查询其所有信息
-        Admin lecturer = adminMapper.selectOne(new QueryWrapper<Admin>().eq("id", adminContextUtil.getAdminId()));
-        if(lecturer == null) {
+        Admin admin = adminMapper.selectOne(new QueryWrapper<Admin>().eq("id", adminContextUtil.getAdminId()));
+        if(admin == null) {
             throw new BaseException(ExceptionEnum.ADMIN_NOT_EXIST);
         }
         lecture = Lecture.builder()
-                .creatorId(lecturer.getId())
-                .speakerName(lecturer.getLecturerName())
-                .speakerTitle(lecturer.getLecturerTitle())
+                .creatorId(admin.getId())
+                .speakerName(admin.getLecturerName())
+                .speakerTitle(admin.getLecturerTitle())
                 .status(LectureStatusConstant.LECTURE_STATUS_PENDING) // 新建的讲座默认为待审核状态
                 .build();
 
         // 拷贝属性
         BeanUtils.copyProperties(dto, lecture);
 
+        // 将上传的文件保存到本地
+        FileSaveVo saveVo = adminService.uploadFile(file);
+
+        // 将文档存入向量数据库中
+        Resource resource = new FileSystemResource(new File(urlUtil.getLocalFilePath(saveVo.getResourceUrl())));
+        vectorStoreService.save(resource, saveVo.getRagDocId());
+
+        // 设置resourceUrl和ragDocId
+        lecture.setResourceUrl(saveVo.getResourceUrl());
+        lecture.setRagDocId(saveVo.getRagDocId());
         // 插入数据库
         int insertResult = lectureMapper.insert(lecture);
         if (insertResult == 0) {
+            // todo 数据库插入失败时删除本地和向量数据库中保存的文档信息
             throw new BaseException(ExceptionEnum.DB_INSERT_ERROR);
         }
     }
@@ -139,7 +167,6 @@ public class LectureServiceImpl implements LectureService {
 
     /**
      * 讲师根据id删除讲座
-     *
      * @param id
      * @param resourceUrl
      */
@@ -157,9 +184,10 @@ public class LectureServiceImpl implements LectureService {
             throw new BaseException(ExceptionEnum.LECTURE_STATUS_APPROVED_CANNOT_DELETE);
         }
         // 删除本地保存的讲座对应的文档
-        fileRepository.delete(resourceUrl);
+        fileRepository.delete(urlUtil.extractPath(resourceUrl));
 
-        // todo 删除向量数据库中的数据
+        // 删除向量数据库中的数据
+        vectorStoreService.delete(urlUtil.extractFileName(resourceUrl));
 
         int deleteResult = lectureMapper.deleteById(id);
         if(deleteResult == 0) {
@@ -275,8 +303,8 @@ public class LectureServiceImpl implements LectureService {
             throw new BaseException(ExceptionEnum.LECTURE_STATUS_INVALID);
         }
         // todo 如果修改了讲座的资源文件
-        // todo 删除本地保存的资源文件
-        // todo 删除向量数据库中的数据
+            // todo 删除本地保存的资源文件
+            // todo 删除向量数据库中的数据
 
         // 属性拷贝
         BeanUtils.copyProperties(dto, lecture);
@@ -333,7 +361,7 @@ public class LectureServiceImpl implements LectureService {
                 StringUtils.hasText(dto.getDescription()) ||
                 StringUtils.hasText(dto.getLocation()) ||
                 StringUtils.hasText(dto.getTags()) ||
-                StringUtils.hasText(dto.getResourceUrl()) ||
+//                StringUtils.hasText(dto.getResourceUrl()) ||
                 dto.getCapacity() != null ||
                 dto.getLectureTime() != null;
     }
