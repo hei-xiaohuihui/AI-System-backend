@@ -49,8 +49,10 @@ public class ChatServiceImpl implements ChatService {
      */
     @Override
     public Flux<String> handleChat(String sessionId, String message){
-        Long userId = userContextUtil.getUserId();
+        // 将用户提问加上 /no_think 切换为非思考模式
+        String modelMessage = message + "/no_think";
         // 设置当前用户id到ChatMemory
+        Long userId = userContextUtil.getUserId();
         ((MySqlChatMemory) chatMemory).setCurrentUserId(userId);
 
         // 1.先检查缓存中是否有问题对应的答案
@@ -73,7 +75,7 @@ public class ChatServiceImpl implements ChatService {
 
         // 调用AI模型并保存回复内容到数据库和缓存中
         return chatClient.prompt()
-                .user(message)
+                .user(modelMessage)
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, sessionId))
                 .stream()
                 .content()

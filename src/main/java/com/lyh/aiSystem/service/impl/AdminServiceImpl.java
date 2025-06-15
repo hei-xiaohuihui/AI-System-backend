@@ -70,12 +70,12 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public String adminLogin(AdminLoginDto adminLoginDto) {
-        // 先检查账号状态
-        // 根据用户名查询
-        Admin one = adminMapper.selectOne(new QueryWrapper<Admin>().eq("username", adminLoginDto.getUsername()));
-        if(one.getStatus().equals(AccountStatusConstant.ACCOUNT_STATUS_DISABLED)) {
-            throw new BaseException(ExceptionEnum.ADMIN_ACCOUNT_DISABLED); // 抛出账号已被禁用异常
-        }
+//        // 先检查账号状态
+//        // 根据用户名查询
+//        Admin one = adminMapper.selectOne(new QueryWrapper<Admin>().eq("username", adminLoginDto.getUsername()));
+//        if(one.getStatus().equals(AccountStatusConstant.ACCOUNT_STATUS_DISABLED)) {
+//            throw new BaseException(ExceptionEnum.ADMIN_ACCOUNT_DISABLED); // 抛出账号已被禁用异常
+//        }
 
         // 对用户输入密码进行MD5加密
         String md5Password;
@@ -89,6 +89,10 @@ public class AdminServiceImpl implements AdminService {
         Admin admin = adminMapper.selectOne(new QueryWrapper<Admin>().eq("username", adminLoginDto.getUsername()).eq("password", md5Password));
         if(admin == null) {
             throw new BaseException(ExceptionEnum.ADMIN_USERNAME_OR_PASSWORD_ERROR); // 抛出用户名或密码错误异常
+        }
+        // 检查账户状态
+        if(admin.getStatus().equals(AccountStatusConstant.ACCOUNT_STATUS_DISABLED)) {
+            throw new BaseException(ExceptionEnum.ADMIN_ACCOUNT_DISABLED); // 抛出账号已被禁用异常
         }
 
         // 生成Jwt
