@@ -1,11 +1,15 @@
 package com.lyh.aiSystem.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lyh.aiSystem.pojo.dto.*;
+import com.lyh.aiSystem.pojo.entity.Lecture;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForLecturer;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForSuperAdmin;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForUser;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
 
 public interface LectureService {
 

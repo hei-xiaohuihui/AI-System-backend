@@ -12,11 +12,16 @@ import com.lyh.aiSystem.pojo.entity.Lecture;
 import com.lyh.aiSystem.pojo.entity.LectureEnroll;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForUserEnroll;
 import com.lyh.aiSystem.service.LectureEnrollService;
+import com.lyh.aiSystem.service.LectureService;
 import com.lyh.aiSystem.utils.UserContextUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -100,11 +105,16 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
     public IPage<LecturePageVoForUserEnroll> getEnrollLectures(LecturePageDtoForUser dto) {
         // 根据用户id查询其报名的所有讲座
         List<LectureEnroll> lectureEnrolls = lectureEnrollMapper.selectList(new QueryWrapper<LectureEnroll>().eq("user_id", userContextUtil.getUserId()));
+        if(CollectionUtils.isEmpty(lectureEnrolls)) {
+            return new Page<>();
+        }
         // 创建分页对象
         Page<Lecture> page = new Page<>(dto.getPageNum(), dto.getPageSize());
         QueryWrapper<Lecture> queryWrapper = new QueryWrapper<>();
         // 创建查询条件: 根据所有讲座id查询
-        queryWrapper.in("id", lectureEnrolls.stream().map(lectureEnroll -> lectureEnroll.getLectureId()).collect(Collectors.toList()));
+        queryWrapper.in("id", lectureEnrolls.stream().map(lectureEnroll -> lectureEnroll.getLectureId()).collect(Collectors.toList())); // 注意不先判断lectureEnrolls为非空的话会导致SQL拼接错误
+        // 模糊查询
+        setCommonQueryWrapper(queryWrapper, dto.getTitle(), dto.getSpeakerName(), dto.getSpeakerTitle(), dto.getLocation(), dto.getTags(), dto.getStartTime(), dto.getEndTime());
         queryWrapper.orderByAsc("lecture_time");
         IPage<Lecture> lectures = lectureMapper.selectPage(page, queryWrapper);
         // 封装为Vo对象
@@ -121,6 +131,7 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
             }
             return vo;
         }).collect(Collectors.toList());
+
         // 封装为PageVo对象
         Page<LecturePageVoForUserEnroll> pageVo = new Page<>();
         pageVo.setCurrent(lectures.getCurrent());
@@ -142,4 +153,29 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
                         .eq("lecture_id", lectureId));
         return count != null ? count.intValue() : 0;
     }
+
+    /**
+     * 设置查询条件
+     */
+    private void setCommonQueryWrapper(QueryWrapper<Lecture> queryWrapper, String title, String speakerName, String speakerTitle, String location, String tags, LocalDateTime startTime, LocalDateTime endTime) {
+        if(StringUtils.hasText(title)) {
+            queryWrapper.like("title", title);
+        }
+        if(StringUtils.hasText(speakerName)) {
+            queryWrapper.like("speaker_name", speakerName);
+        }
+        if(StringUtils.hasText(speakerTitle)) {
+            queryWrapper.eq("speaker_title", speakerTitle);
+        }
+        if(StringUtils.hasText(location)) {
+            queryWrapper.like("location", location);
+        }
+        if(StringUtils.hasText(tags)) { // todo 实现tage不区分大小写
+            queryWrapper.like("tags", tags);
+        }
+        if(startTime != null && endTime != null) {
+            queryWrapper.between("lecture_time", startTime, endTime);
+        }
+    }
+
 }

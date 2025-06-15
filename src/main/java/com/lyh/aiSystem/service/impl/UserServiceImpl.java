@@ -1,6 +1,7 @@
 package com.lyh.aiSystem.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.lyh.aiSystem.constant.AccountStatusConstant;
 import com.lyh.aiSystem.constant.JwtClaimsConstant;
 import com.lyh.aiSystem.pojo.dto.UserLoginDto;
 import com.lyh.aiSystem.pojo.dto.UserRegisterDto;
@@ -89,6 +90,10 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectOne(new QueryWrapper<User>().eq("username", userLoginDto.getUsername()).eq("password", md5Password));
         if(user == null) { // 用户名或密码错误
             throw new BaseException(ExceptionEnum.USER_USERNAME_OR_PASSWORD_ERROR);
+        }
+
+        if(user.getStatus().equals(AccountStatusConstant.ACCOUNT_STATUS_DISABLED)) {
+            throw new BaseException(ExceptionEnum.USER_ACCOUNT_DISABLED); // 账户已被禁用
         }
 
         // 生成Jwt

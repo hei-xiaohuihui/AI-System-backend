@@ -20,6 +20,7 @@ public enum ExceptionEnum {
     USER_TOKEN_INVALID(11006, "Invalid Token"),
     USER_NOT_LOGIN(11007, "用户未登录"),
     USER_ID_GET_FAIL(11008, "用户id获取失败"),
+    USER_ACCOUNT_DISABLED(11009, "账号已被禁用"),
 
     /*
      *  管理员相关异常
@@ -28,6 +29,7 @@ public enum ExceptionEnum {
     ADMIN_USERNAME_OR_PASSWORD_ERROR(12002, "用户名或密码错误"),
     ADMIN_NOT_SUPPER_ADMIN(12003, "非超级管理员用户"),
     ADMIN_ALREADY_EXIST(12004, "管理员/用户名已存在"),
+    ADMIN_ACCOUNT_DISABLED(12005, "账号已被禁用"),
 
     /**
      *  数据库相关异常

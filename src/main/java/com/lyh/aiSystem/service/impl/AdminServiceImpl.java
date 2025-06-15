@@ -3,6 +3,7 @@ package com.lyh.aiSystem.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.lyh.aiSystem.constant.AccountStatusConstant;
 import com.lyh.aiSystem.constant.AdminRoleConstant;
 import com.lyh.aiSystem.constant.JwtClaimsConstant;
 import com.lyh.aiSystem.enumeration.ExceptionEnum;
@@ -69,12 +70,12 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public String adminLogin(AdminLoginDto adminLoginDto) {
-        // 先检查是否是管理员
+        // 先检查账号状态
         // 根据用户名查询
-//        Admin one = adminMapper.selectOne(new QueryWrapper<Admin>().eq("username", adminLoginDto.getUsername()));
-//        if(one == null) {
-//            throw new BaseException(ExceptionEnum.ADMIN_NOT_EXIST); // 抛出管理员不存在异常
-//        }
+        Admin one = adminMapper.selectOne(new QueryWrapper<Admin>().eq("username", adminLoginDto.getUsername()));
+        if(one.getStatus().equals(AccountStatusConstant.ACCOUNT_STATUS_DISABLED)) {
+            throw new BaseException(ExceptionEnum.ADMIN_ACCOUNT_DISABLED); // 抛出账号已被禁用异常
+        }
 
         // 对用户输入密码进行MD5加密
         String md5Password;

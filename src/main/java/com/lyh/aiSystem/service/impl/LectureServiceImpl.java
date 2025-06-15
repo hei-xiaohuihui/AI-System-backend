@@ -27,14 +27,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -263,7 +261,7 @@ public class LectureServiceImpl implements LectureService {
         Page<Lecture> page = new Page<>(dto.getPageNum(), dto.getPageSize());
         QueryWrapper<Lecture> queryWrapper = new QueryWrapper<>();
         // 设置查询条件
-        setCommonQueryWrapper(queryWrapper, dto.getTitle(), dto.getSpeakerName(), dto.getSpeakerTitle(), dto.getLocation(), dto.getTags(), null, dto.getStartTime(), dto.getEndTime());
+        this.setCommonQueryWrapper(queryWrapper, dto.getTitle(), dto.getSpeakerName(), dto.getSpeakerTitle(), dto.getLocation(), dto.getTags(), null, dto.getStartTime(), dto.getEndTime());
         queryWrapper.eq("status", LectureStatusConstant.LECTURE_STATUS_APPROVED); // 只能查询到审核通过的讲座
         queryWrapper.orderByAsc("lecture_time"); // 更具讲座开始时间升序排列
         IPage<Lecture> lectures = lectureMapper.selectPage(page, queryWrapper);

@@ -16,6 +16,7 @@ public class LecturePageDtoForUser {
 
     private int pageSize = 10;
 
+    // 模糊查询
     private String title;
 
     private String speakerName;

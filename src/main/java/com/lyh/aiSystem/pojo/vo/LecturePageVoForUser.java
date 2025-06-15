@@ -15,6 +15,10 @@ public class LecturePageVoForUser {
 
     private String title;
 
+    private String speakerName;
+
+    private String speakerTitle;
+
     private String description;
 
     private LocalDateTime lectureTime;
@@ -24,6 +28,8 @@ public class LecturePageVoForUser {
     private String tags;
 
     private Integer capacity;
+
+    private String resourceUrl;
 
     // 报名人数：需要通过计算得出
     private Integer enrollCount;
