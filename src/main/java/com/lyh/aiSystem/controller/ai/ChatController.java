@@ -26,6 +26,7 @@ public class ChatController {
      * @param message
      * @return
      */
+//    @GetMapping(value ="/model", produces = "text/html;charset=utf-8")
     @GetMapping(value ="/model", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<String> chat(@RequestParam("sessionId") String sessionId,
                              @RequestParam("message") String message) {

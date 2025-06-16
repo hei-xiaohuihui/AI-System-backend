@@ -10,6 +10,7 @@ import com.lyh.aiSystem.pojo.vo.LecturePageVoForUser;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public interface LectureService {
 
@@ -28,4 +29,6 @@ public interface LectureService {
     IPage<LecturePageVoForUser> lecturePageForUser(LecturePageDtoForUser dto);
 
     void recreateLecture(LectureRecreateDto dto);
+
+    List<LecturePageVoForUser> getAllLectures();
 }

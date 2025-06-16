@@ -23,6 +23,7 @@ import com.lyh.aiSystem.service.LectureService;
 import com.lyh.aiSystem.service.MilvusVectorStoreService;
 import com.lyh.aiSystem.utils.AdminContextUtil;
 import com.lyh.aiSystem.utils.UrlUtil;
+import io.jsonwebtoken.lang.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -312,6 +313,25 @@ public class LectureServiceImpl implements LectureService {
         if(updateResult == 0) {
             throw new BaseException(ExceptionEnum.DB_UPDATE_ERROR);
         }
+    }
+
+    /**
+     *  获取所有讲座信息
+     * @return
+     */
+    @Override
+    public List<LecturePageVoForUser> getAllLectures() {
+        List<Lecture> lectures = lectureMapper.selectList(new QueryWrapper<Lecture>().eq("status", LectureStatusConstant.LECTURE_STATUS_APPROVED));
+        if(Collections.isEmpty(lectures)) {
+            return List.of();
+        }
+
+        return lectures.stream().map(lecture -> {
+            LecturePageVoForUser vo = new LecturePageVoForUser();
+            BeanUtils.copyProperties(lecture, vo);
+            vo.setEnrollCount(lectureEnrollService.getEnrollCount(lecture.getId()));
+            return vo;
+        }).collect(Collectors.toList());
     }
 
     /**

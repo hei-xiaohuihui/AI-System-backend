@@ -3,13 +3,13 @@ spring:
     name: AI-System
   ai:
     # ollama本地部署的大模型配置
-    ollama:
-      base-url: http://localhost:11434 # 模型接口地址
-      chat:
-#        model: deepseek-r1:7b # 使用的模型名称
-        model: qwen3:8b # 使用的模型名称
-#      embedding:
-#        model: nomic-embed-text:v1.5 # 向量维度为768
+#    ollama:
+#      base-url: http://localhost:11434 # 模型接口地址
+#      chat:
+##        model: deepseek-r1:7b # 使用的模型名称
+#        model: qwen3:8b # 使用的模型名称
+##      embedding:
+##        model: nomic-embed-text:v1.5 # 向量维度为768
     openai:
       # 阿里模型配置
       base-url: https://dashscope.aliyuncs.com/compatible-mode
@@ -18,9 +18,9 @@ spring:
         options:
           model: text-embedding-v4 # 模型名称
           dimensions: 1024 # 向量维度
-#      chat:
-#        options:
-#          model: qwen3-8b
+      chat:
+        options:
+          model: qwen-max-latest
 #    vectorstore:
 #      milvus:
 #        client:

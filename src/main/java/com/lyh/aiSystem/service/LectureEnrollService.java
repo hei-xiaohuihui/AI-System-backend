@@ -4,13 +4,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.lyh.aiSystem.pojo.dto.LecturePageDtoForUser;
 import com.lyh.aiSystem.pojo.vo.LecturePageVoForUserEnroll;
 
+import java.util.List;
+
 public interface LectureEnrollService {
 
-    void enrollLecture(Long lectureId);
+    String enrollLecture(Long lectureId);
 
     Integer getEnrollCount(Long lectureId);
 
-    void cancelEnroll(Long lectureId);
+    String cancelEnroll(Long lectureId);
 
     IPage<LecturePageVoForUserEnroll> getEnrollLectures(LecturePageDtoForUser dto);
+
+    List<LecturePageVoForUserEnroll> getEnrollLectures();
 }

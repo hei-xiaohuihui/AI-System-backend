@@ -10,6 +10,7 @@ import com.lyh.aiSystem.mapper.ChatMessageMapper;
 import com.lyh.aiSystem.mapper.ChatSessionMapper;
 import com.lyh.aiSystem.service.ChatSessionService;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -36,15 +37,8 @@ public class MySqlChatMemory implements ChatMemory {
 
     private final ChatSessionService chatSessionService;
 
-    private Long currentUserId; // 用于存储当前用户id
-
-    /**
-     * 设置当前用户ID
-     * @param userId
-     */
-    public void setCurrentUserId(Long userId) {
-        this.currentUserId = userId;
-    }
+    @Setter
+    private Long currentUserId; // 解决无法通过用户上下文工具获取用户上下文的问题
 
     /**
      * 将每条会话消息持久化到MySql数据库（包括用户提问和AI回答）

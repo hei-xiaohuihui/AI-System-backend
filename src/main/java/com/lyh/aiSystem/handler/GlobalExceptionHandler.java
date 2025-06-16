@@ -44,13 +44,13 @@ public class GlobalExceptionHandler{
      * @param ex
      * @return
      */
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Result> OthersExceptionHandler(Exception ex) {
-        ex.printStackTrace();
-//        return Result.error(ExceptionEnum.SYSTEM_ERROR.getCode(), ExceptionEnum.SYSTEM_ERROR.getValue());
-        // 其他异常默认返回500状态码
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR) // 设置状态码为500
-                .body(Result.error(ExceptionEnum.SYSTEM_ERROR.getCode(), ExceptionEnum.SYSTEM_ERROR.getValue())); // 设置自定义错误信息
-    }
+//    @ExceptionHandler(Exception.class)
+//    public ResponseEntity<Result> OthersExceptionHandler(Exception ex) {
+//        ex.printStackTrace();
+////        return Result.error(ExceptionEnum.SYSTEM_ERROR.getCode(), ExceptionEnum.SYSTEM_ERROR.getValue());
+//        // 其他异常默认返回500状态码
+//        return ResponseEntity
+//                .status(HttpStatus.INTERNAL_SERVER_ERROR) // 设置状态码为500
+//                .body(Result.error(ExceptionEnum.SYSTEM_ERROR.getCode(), ExceptionEnum.SYSTEM_ERROR.getValue())); // 设置自定义错误信息
+//    }
 }

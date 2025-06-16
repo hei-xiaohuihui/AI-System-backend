@@ -15,6 +15,8 @@ import com.lyh.aiSystem.service.LectureEnrollService;
 import com.lyh.aiSystem.service.LectureService;
 import com.lyh.aiSystem.utils.UserContextUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 /**
  * @author BigHH
  */
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class LectureEnrollServiceImpl implements LectureEnrollService {
@@ -38,22 +41,26 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
 
     private final UserContextUtil userContextUtil;
 
+    @Setter
+    private Long userId; // AI调用tool时无法通过用户上下文工具获取用户信息
+
     /**
      *  用户（学生）报名讲座
      * @param lectureId
      */
     @Override
-    public void enrollLecture(Long lectureId) {
+    public String enrollLecture(Long lectureId) {
         // 检查讲座是否存在
         Lecture lecture = lectureMapper.selectById(lectureId);
         if(lecture == null) {
             throw new BaseException(ExceptionEnum.LECTURE_NOT_EXIST); // 讲座不存在
         }
+        log.error("报名讲座的用户id: {}", userId);
         // 检查用户是否已报名
         LectureEnroll lectureEnroll = lectureEnrollMapper.selectOne(
                 new QueryWrapper<LectureEnroll>()
                         .eq("lecture_id", lectureId)
-                        .eq("user_id", userContextUtil.getUserId()));
+                        .eq("user_id", userId));
         if(lectureEnroll != null) {
             throw new BaseException(ExceptionEnum.LECTURE_USER_ALREADY_ENROLLED); // 用户已报名
         }
@@ -64,12 +71,13 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
         }
         // 插入报名记录
         lectureEnroll = new LectureEnroll();
-        lectureEnroll.setUserId(userContextUtil.getUserId());
+        lectureEnroll.setUserId(userId);
         lectureEnroll.setLectureId(lectureId);
         int insertResult = lectureEnrollMapper.insert(lectureEnroll);
         if(insertResult == 0) {
             throw new BaseException(ExceptionEnum.DB_INSERT_ERROR);
         }
+        return "报名成功";
     }
 
     /**
@@ -77,7 +85,7 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
      * @param lectureId
      */
     @Override
-    public void cancelEnroll(Long lectureId) {
+    public String cancelEnroll(Long lectureId) {
         // 检查讲座是否存在
         if(lectureMapper.selectById(lectureId) == null) {
             throw new BaseException(ExceptionEnum.LECTURE_NOT_EXIST); // 讲座不存在
@@ -86,15 +94,16 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
         LectureEnroll lectureEnroll = lectureEnrollMapper.selectOne(
                 new QueryWrapper<LectureEnroll>()
                         .eq("lecture_id", lectureId)
-                        .eq("user_id", userContextUtil.getUserId()));
+                        .eq("user_id", userId));
         if(lectureEnroll == null) {
             throw new BaseException(ExceptionEnum.LECTURE_USER_NOT_ENROLLED); // 用户未报名
         }
         // 删除报名记录
-        int deleteResult = lectureEnrollMapper.delete(new QueryWrapper<LectureEnroll>().eq("user_id", userContextUtil.getUserId()).eq("lecture_id", lectureId));
+        int deleteResult = lectureEnrollMapper.delete(new QueryWrapper<LectureEnroll>().eq("user_id", userId).eq("lecture_id", lectureId));
         if(deleteResult == 0) {
             throw new BaseException(ExceptionEnum.DB_DELETE_ERROR);
         }
+        return "取消报名成功";
     }
 
     /**
@@ -104,7 +113,7 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
     @Override
     public IPage<LecturePageVoForUserEnroll> getEnrollLectures(LecturePageDtoForUser dto) {
         // 根据用户id查询其报名的所有讲座
-        List<LectureEnroll> lectureEnrolls = lectureEnrollMapper.selectList(new QueryWrapper<LectureEnroll>().eq("user_id", userContextUtil.getUserId()));
+        List<LectureEnroll> lectureEnrolls = lectureEnrollMapper.selectList(new QueryWrapper<LectureEnroll>().eq("user_id", userId));
         if(CollectionUtils.isEmpty(lectureEnrolls)) {
             return new Page<>();
         }
@@ -112,8 +121,7 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
         Page<Lecture> page = new Page<>(dto.getPageNum(), dto.getPageSize());
         QueryWrapper<Lecture> queryWrapper = new QueryWrapper<>();
         // 创建查询条件: 根据所有讲座id查询
-        queryWrapper.in("id", lectureEnrolls.stream().map(lectureEnroll -> lectureEnroll.getLectureId()).collect(Collectors.toList())); // 注意不先判断lectureEnrolls为非空的话会导致SQL拼接错误
-        // 模糊查询
+        queryWrapper.in("id", lectureEnrolls.stream().map(lectureEnroll -> lectureEnroll.getLectureId()).collect(Collectors.toList())); // 注意不先判断lectureEnrolls为非空的话会导致SQL拼接错误// 模糊查询
         setCommonQueryWrapper(queryWrapper, dto.getTitle(), dto.getSpeakerName(), dto.getSpeakerTitle(), dto.getLocation(), dto.getTags(), dto.getStartTime(), dto.getEndTime());
         queryWrapper.orderByAsc("lecture_time");
         IPage<Lecture> lectures = lectureMapper.selectPage(page, queryWrapper);
@@ -139,6 +147,26 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
         pageVo.setTotal(lectures.getTotal());
         pageVo.setRecords(voList);
         return pageVo;
+    }
+
+    /**
+     *  获取用户报名的所有讲座信息
+     * @return
+     */
+    @Override
+    public List<LecturePageVoForUserEnroll> getEnrollLectures() {
+        List<LectureEnroll> lectureEnrolls = lectureEnrollMapper.selectList(new QueryWrapper<LectureEnroll>().eq("user_id", userId));
+        if(CollectionUtils.isEmpty(lectureEnrolls)) {
+            return List.of();
+        }
+        return lectureEnrolls.stream().map(lectureEnroll -> {
+            LecturePageVoForUserEnroll vo = new LecturePageVoForUserEnroll();
+            Lecture lecture = lectureMapper.selectById(lectureEnroll.getLectureId());
+            BeanUtils.copyProperties(lecture, vo);
+            vo.setEnrollCount(this.getEnrollCount(lectureEnroll.getLectureId()));
+            vo.setEnrollTime(lectureEnroll.getEnrollTime());
+            return vo;
+        }).collect(Collectors.toList());
     }
 
     /**

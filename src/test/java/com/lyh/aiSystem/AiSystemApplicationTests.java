@@ -56,7 +56,7 @@ class AiSystemApplicationTests {
                 .query("论语中教育的目的是什么")
                 .topK(1) // 搜索返回的分数最高的1个结果
                 .similarityThreshold(0.5f) // 搜索相似度阈值
-//                .filterExpression("file_name == '教资知识笔记.pdf'")
+                // .filterExpression("file_name == '教资知识笔记.pdf'")
                 .build();
         List<Document> docs = vectorStore.similaritySearch(request);
         if (CollectionUtils.isEmpty(docs)) {
