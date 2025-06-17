@@ -50,6 +50,9 @@ public class LectureEnrollServiceImpl implements LectureEnrollService {
      */
     @Override
     public String enrollLecture(Long lectureId) {
+        if(userId == null) {
+            userId = userContextUtil.getUserId();
+        }
         // 检查讲座是否存在
         Lecture lecture = lectureMapper.selectById(lectureId);
         if(lecture == null) {
