@@ -53,7 +53,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public Flux<String> handleChat(String sessionId, String message) {
         // 将用户提问加上 /no_think 切换为非思考模式
-//        String modelMessage = message + "/no_think";
+        // String modelMessage = message + "/no_think";
         // 设置当前用户id
         Long userId = userContextUtil.getUserId();
         ((MySqlChatMemory) chatMemory).setCurrentUserId(userId);
@@ -62,6 +62,7 @@ public class ChatServiceImpl implements ChatService {
         // 1.先检查缓存中是否有问题对应的答案
         String cacheAnswer = qaCacheService.getAnswerCache(sessionId, message);
         if (cacheAnswer != null) { // 缓存命中
+            log.debug("Cache hit for question:{}", message);
             // 即使用户重复提问，也将用户的提问和回答保存到数据库中
             List<Message> messages = Arrays.asList( // 创建消息列表
                     new UserMessage(message),
@@ -79,7 +80,7 @@ public class ChatServiceImpl implements ChatService {
         // 调用AI模型并保存回复内容到数据库和缓存中
         return chatClient.prompt()
                 .user(message)
-//                .tools(dataTimeTools) // 添加工具
+                // .tools(dataTimeTools) // 添加工具
                 .advisors(a -> a.param(ChatMemory.CONVERSATION_ID, sessionId))
                 .stream()
                 .content()
@@ -88,21 +89,12 @@ public class ChatServiceImpl implements ChatService {
                 })
                 .doOnComplete(() -> {
                     if (!fullResponse.isEmpty()) {
-                        // 在流完成时保存完整的用户提问和ai回复
-                        // 保存到缓存
+                        // 在流完成时保存完整的用户提问和ai回复到缓存
                         String response = fullResponse.toString();
                         qaCacheService.setQACache(sessionId, message, response);
-
-                        // 保存聊天记录到数据库
-                        List<Message> messages = Arrays.asList(
-                                new UserMessage(message),
-                                new AssistantMessage(response));
-                        chatMemory.add(sessionId, messages);
                     }
                 })
-                .doFinally(signalType -> {
-                    log.debug("Chat completed for session:{}", sessionId);
-                });
+                .doFinally(signalType -> log.debug("Chat completed for session:{}", sessionId));
     }
 
 }
