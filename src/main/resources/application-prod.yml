@@ -1,0 +1,86 @@
+spring:
+  application:
+    name: AI-System
+  ai:
+    openai:
+      # 阿里模型配置
+      base-url: https://dashscope.aliyuncs.com/compatible-mode
+      api-key: ${DASHSCOPE_API_KEY}
+      embedding: # 向量模型配置
+        options:
+          model: text-embedding-v4 # 模型名称
+          dimensions: 1024 # 向量维度
+      chat:
+        options:
+          model: qwen-max-latest
+  data:
+    # Redis配置
+    redis:
+      host: ${REDIS_HOST:}
+      password: ${REDIS_PASSWORD}
+      port: 6379
+      database: 0 # 使用的数据库索引
+      timeout: 10000 # 连接超时时间
+      lettuce:
+        pool:
+          max-active: 8
+          max-wait: -1
+          max-idle: 8
+          min-idle: 0
+  # MySQL
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:3306/${MYSQL_DATABASE}
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
+
+  servlet:
+    multipart:
+      location: ${UPLOAD_TMP_PATH} # 指定tomcat的临时上传目录（即Servlet容器接收文件时的缓冲路径）
+
+# mybatis-plus
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+
+logging:
+  # 设置日志级别
+  level:
+    org.springframework.ai.chat.client.advisor: debug
+    com.lyh.aiSystem: debug
+
+lyh:
+  # 密码加密
+  password:
+    salt: ${PASSWORD_SALT}
+  # Jwt
+  jwt:
+    user_secret-key: ${JWT_USER_SECRET}
+    admin_secret-key: ${JWT_ADMIN_SECRET}
+    expire-time: 36000000 # Jwt过期时间（单位毫秒）: 10小时
+    token-head: Authorization # 保存Jwt的字段名称
+  # Redis
+  redis:
+    cache-expire-time: 3600000 # Redis缓存过期时间（单位毫秒）: 1小时
+    max-cache-size: 1000 # Redis最大缓存条目数（用于LFU缓存失效策略）
+  # 文件上传相关配置
+  uploads:
+    base-path: ${UPLOAD_BASE_PATH}
+    pdf:
+      knowledge-path: /uploads/pdf/Knowledge/
+      lecture-path: /uploads/pdf/Lecture/
+    word:
+      knowledge-path: /uploads/word/Knowledge/
+      lecture-path: /uploads/word/Lecture/
+  milvus:
+    save-key: rag_doc_id
+    host: ${MILVUS_HOST}
+    port: ${MILVUS_PORT}
+    username: ${MILVUS_USERNAME}
+    password: ${MILVUS_PASSWORD}
+
+server:
+  port: 7816
+

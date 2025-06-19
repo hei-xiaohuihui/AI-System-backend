@@ -32,9 +32,5 @@ public class LectureRecreateDto {
 
     private String tags;
 
-    private String resourceUrl;
-
-//    private String ragDocId;
-
     private Integer capacity;
 }

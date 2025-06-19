@@ -285,11 +285,13 @@ public class LectureServiceImpl implements LectureService {
     }
 
     /**
-     *  讲师重新创建讲座（将被拒绝的讲座修改后再次提交审核）
+     * 讲师重新创建讲座（将被拒绝的讲座修改后再次提交审核）
+     *
      * @param dto
+     * @param file
      */
     @Override
-    public void recreateLecture(LectureRecreateDto dto) {
+    public void recreateLecture(LectureRecreateDto dto, MultipartFile file) {
         // 根据id查询被拒讲座信息
         Lecture lecture = lectureMapper.selectById(dto.getId());
         if(lecture == null) { // 讲座不存在
@@ -301,9 +303,20 @@ public class LectureServiceImpl implements LectureService {
         if(!lecture.getStatus().equals(LectureStatusConstant.LECTURE_STATUS_REJECTED)) { // 只有被拒的讲座才能被修改后重新提交
             throw new BaseException(ExceptionEnum.LECTURE_STATUS_INVALID);
         }
-        // todo 如果修改了讲座的资源文件
-            // todo 删除本地保存的资源文件
-            // todo 删除向量数据库中的数据
+        // 如果修改了讲座的资源文件
+        if(file != null) {
+            // 删除本地保存的资源文件
+            fileRepository.delete(urlUtil.extractPath(lecture.getResourceUrl()));
+            // 删除向量数据库中的数据
+            vectorStoreService.delete(lecture.getRagDocId());
+
+            // 将上传的文件保存到本地
+            FileSaveVo saveVo = adminService.uploadFile(file);
+
+            // 将文档存入向量数据库中
+            Resource resource = new FileSystemResource(new File(urlUtil.getLocalFilePath(saveVo.getResourceUrl())));
+            vectorStoreService.save(resource, saveVo.getRagDocId());
+        }
 
         // 属性拷贝
         BeanUtils.copyProperties(dto, lecture);

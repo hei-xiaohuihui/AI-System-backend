@@ -73,8 +73,8 @@ public class LectureController {
      * @return
      */
     @PostMapping("/recreate")
-    public Result recreateLecture(@RequestBody @Valid LectureRecreateDto dto) {
-        lectureService.recreateLecture(dto);
+    public Result recreateLecture(@RequestPart @Valid LectureRecreateDto dto, @RequestPart(value = "file", required = false) MultipartFile file) {
+        lectureService.recreateLecture(dto, file);
         return Result.success();
     }
 }

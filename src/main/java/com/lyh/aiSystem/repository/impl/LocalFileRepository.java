@@ -7,6 +7,7 @@ import com.lyh.aiSystem.properties.FileUploadProperties;
 import com.lyh.aiSystem.repository.FileRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,6 +25,7 @@ import java.util.UUID;
  * @author BigHH
  *  保存传上的文件到本地
  */
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class LocalFileRepository implements FileRepository {
@@ -44,6 +46,7 @@ public class LocalFileRepository implements FileRepository {
         File dir = new File(basePath + path);
         // 判断保存路径是否存在，不存在则创建
         if(!dir.exists() && !dir.mkdirs()) {
+            log.error("路径创建失败：{}", dir.getAbsolutePath());
             throw new BaseException(ExceptionEnum.SYSTEM_DIR_CREATE_ERROR); // 路径创建失败
         }
 
@@ -57,6 +60,7 @@ public class LocalFileRepository implements FileRepository {
         try {
             file.transferTo(des);
         } catch (IOException e) {
+            log.error("文件上传失败，路径：{}，异常：{}", des.getAbsolutePath(), e.getMessage(), e);  // 打印异常堆栈
             throw new BaseException(ExceptionEnum.FILE_UPLOAD_FAILED); // 文件上传失败
         }
 
@@ -81,8 +85,10 @@ public class LocalFileRepository implements FileRepository {
             // 获取保存文件的完整路径
             Path fullPath = Paths.get(fileUploadProperties.getBasePath(), resourcePath); // 拼接保存文件的完整路径
             // 删除文件
+            System.out.println("fullPath = " + fullPath);
             Files.deleteIfExists(fullPath);
         } catch (Exception e) {
+            log.error("文件删除失败：{}", e.getMessage(), e);  // 打印异常堆栈
             throw new RuntimeException(e);
         }
     }
